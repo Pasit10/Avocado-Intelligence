@@ -1,41 +1,37 @@
 import React, { useState, useEffect } from 'react';
 
-import util from '../../util/util';
+import Loading from '../loading/Loading';
 
-const Table = ({ query, columns, Box }) => {
-    const [data, setData] = useState([]);
+const Table = ({ name, data, columns, Box, activateCheckBox, isLoading}) => {
     const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'ascending' });
     const [selectedRows, setSelectedRows] = useState(new Set());
+    const [sortedData, setSortedData] = useState([]);
 
     const [boxVisible, setBoxVisible] = useState(false);
-    const [selectedProductId, setSelectedProductId] = useState("");
-
-    useEffect(() => {
-        const fetchData = async () => {
-            const result = await util.fetchData(query);
-            setData(result);
-        };
-
-        fetchData();
-    }, [query]);
+    const [selectedItemId, setselectedItemId] = useState("");
 
     useEffect(() => {
         console.log(selectedRows);
     }, [selectedRows]);
+
     const handleSort = (key) => {
         let direction = sortConfig.direction === 'ascending' ? 'descending' : 'ascending';
         setSortConfig({ key, direction });
     };
 
-    const sortedData = [...data].sort((a, b) => {
-        if (a[sortConfig.key] < b[sortConfig.key]) {
-            return sortConfig.direction === 'ascending' ? -1 : 1;
-        }
-        if (a[sortConfig.key] > b[sortConfig.key]) {
-            return sortConfig.direction === 'ascending' ? 1 : -1;
-        }
-        return 0;
-    });
+    useEffect(() => {
+        const sorted = [...data].sort((a, b) => {
+            if (a[sortConfig.key] < b[sortConfig.key]) {
+                return sortConfig.direction === 'ascending' ? -1 : 1;
+            }
+            if (a[sortConfig.key] > b[sortConfig.key]) {
+                return sortConfig.direction === 'ascending' ? 1 : -1;
+            }
+            return 0;
+        });
+
+        setSortedData(sorted);
+    }, [sortConfig, data])
 
     const handleCheckboxChange = (id) => {
         const newSelectedRows = new Set(selectedRows);
@@ -50,16 +46,17 @@ const Table = ({ query, columns, Box }) => {
     const handleExtendObject = (id) => {
         console.log(id);
         setBoxVisible(true);
-        setSelectedProductId(id);
+        setselectedItemId(id);
     }
     const handleCloseModal = () => {
         setBoxVisible(false); // Hide the modal
-        setSelectedProductId(null); // Clear the selected product ID
+        setselectedItemId(null); // Clear the selected product ID
     };
 
     const thStyle = {
         position: 'relative',
         whiteSpace: 'nowrap',
+        cursor: 'pointer',
     };
 
     const sortSymbolStyle = {
@@ -88,14 +85,16 @@ const Table = ({ query, columns, Box }) => {
                 <thead>
                     <tr>
                         <th style={checkboxIdStyle}>
-                            <input type="checkbox" onChange={() => {
-                                if (selectedRows.size === data.length) {
-                                    setSelectedRows(new Set());
-                                } else {
-                                    setSelectedRows(new Set(data.map(item => item.id)));
-                                }
-                            }} checked={selectedRows.size === data.length && data.length > 0} />
-                            <div className="cursor-pointer" style={{ marginLeft: '7em' }} onClick={() => handleSort('id')}>ID</div>
+                            {activateCheckBox && (
+                                <input type="checkbox" onChange={() => {
+                                    if (selectedRows.size === data.length) {
+                                        setSelectedRows(new Set());
+                                    } else {
+                                        setSelectedRows(new Set(data.map(item => item.id)));
+                                    }
+                                }} checked={selectedRows.size === data.length && data.length > 0} />
+                            )}
+                            <div className="cursor-pointer" style={{ marginLeft: '30%' , cursor: 'pointer'}} onClick={() => { handleSort('id') }}>ID</div>
                             {sortConfig.key === 'id' ? (sortConfig.direction === 'ascending' ? <span style={sortSymbolStyle}>▲</span> : <span style={sortSymbolStyle}>▼</span>) : ''}
                         </th>
                         {columns.map((item, index) => (
@@ -113,21 +112,43 @@ const Table = ({ query, columns, Box }) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {sortedData.map((item, index) => (
-                        <tr key={index}>
-                            <td style={checkboxIdStyle}>
-                                <input
-                                    type="checkbox"
-                                    checked={selectedRows.has(item.id)}
-                                    onChange={() => handleCheckboxChange(item.id)}
-                                />
-                                <div className="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" style={{ marginLeft: "5.5em", cursor: "pointer" }} onClick={() => handleExtendObject(item.id)}>{item.id}</div>
+                    {isLoading ? (
+                        <tr>
+                            <td colSpan={columns.length + 1} style={{ textAlign: 'center', padding: '2em' }}>
+                                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    <Loading />
+                                </div>
                             </td>
-                            {columns.map((col, index) => (
-                                <td key={index}>{item[col.toLowerCase()]}</td>
-                            ))}
                         </tr>
-                    ))}
+                    ) : sortedData.length === 0 ? (
+                        <tr>
+                            <td colSpan={columns.length + 1} style={{ textAlign: 'center', padding: '2em' }}>
+                                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                    No data available
+                                </div>
+                            </td>
+                        </tr>
+                    ) : (
+                        sortedData.map((item, index) => (
+                            <tr key={index}>
+                                <td style={checkboxIdStyle}>
+                                    {activateCheckBox && (
+                                        <input
+                                            type="checkbox"
+                                            checked={selectedRows.has(item.id)}
+                                            onChange={() => handleCheckboxChange(item.id)}
+                                        />
+                                    )}
+                                    <div className="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" style={{ marginLeft: "30%", cursor: "pointer" }} onClick={() => {
+                                        handleExtendObject(item.id)
+                                    }}>{item.id}</div>
+                                </td>
+                                {columns.map((col, index) => (
+                                    <td key={index}>{item[col.toLowerCase()]}</td>
+                                ))}
+                            </tr>
+                        ))
+                    )}
                 </tbody>
             </table>
             {boxVisible && (
@@ -135,11 +156,11 @@ const Table = ({ query, columns, Box }) => {
                     <div className="modal-dialog modal-dialog-centered modal-lg">
                         <div className="modal-content">
                             <div className="modal-header">
-                                <h5 className="modal-title">Product Details</h5>
+                                <h5 className="modal-title">{name} Details</h5>
                                 <button type="button" className="btn-close" onClick={handleCloseModal}></button>
                             </div>
                             <div className="modal-body">
-                                <Box id={selectedProductId} />
+                                <Box id={selectedItemId} />
                             </div>
                         </div>
                     </div>
