@@ -9,11 +9,12 @@ CREATE TABLE customer_transaction (
 );
 
 CREATE TABLE product (
-    product_id INT PRIMARY KEY NOT NULL,
+    product_id INT AUTO_INCREMENT NOT NULL,
     name VARCHAR(255),
     price FLOAT,
     detail VARCHAR(255),
-    product_img LONGBLOB
+    product_img LONGBLOB,
+    PRIMARY KEY (product_id)
 );
 
 CREATE TABLE transaction (
@@ -28,7 +29,7 @@ CREATE TABLE transaction (
 
 -- test data part
 -- table product
-USE Ethnicity_Detection_Model;
+
 
 INSERT INTO product (product_id, name, price, detail, product_img) VALUES
 (1, 'Product A', 100, 'Details for Product A', NULL),
