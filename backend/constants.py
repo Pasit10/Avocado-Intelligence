@@ -2,5 +2,5 @@
 
 DATABASE_NAME = 'Ethnicity_Detection_Model'
 DATABASE_PORT = 3306
-USERNAME = 'username'
-PASSWORD = 'password' # database password
+USERNAME = 'root'
+PASSWORD = '0912263056' # database password

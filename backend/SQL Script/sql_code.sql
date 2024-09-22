@@ -1,7 +1,7 @@
 USE Ethnicity_Detection_Model;
 
 CREATE TABLE customer_transaction (
-    customer_id INT AUTO_INCREMENT NOT NULL,
+    customer_id INT NOT NULL,
     sex VARCHAR(255),
     age INT,
     race VARCHAR(255),
@@ -9,7 +9,7 @@ CREATE TABLE customer_transaction (
 );
 
 CREATE TABLE product (
-    product_id INT AUTO_INCREMENT NOT NULL,
+    product_id INT NOT NULL,
     name VARCHAR(255),
     price FLOAT,
     detail VARCHAR(255),
@@ -29,6 +29,10 @@ CREATE TABLE transaction (
 
 -- test data part
 -- table product
+USE Ethnicity_Detection_Model;
+DROP TABLE transaction;
+DROP TABLE product;
+DROP TABLE customer_transaction;
 
 
 INSERT INTO product (product_id, name, price, detail, product_img) VALUES
