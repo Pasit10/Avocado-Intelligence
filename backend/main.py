@@ -1,5 +1,6 @@
 from fastapi import FastAPI, APIRouter
 from starlette.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
 
 from config import database
 from routes.customer import customer
@@ -7,11 +8,18 @@ from routes.product import product
 from routes.transaction import transaction
 from routes import health
 
-app = FastAPI()
+# if terminate program -> close database
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    yield
+    database.shutdown_db_section()
 
+app = FastAPI(lifespan=lifespan)
+
+#middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # You can specify specific origins instead of ""
+    allow_origins=[""],  # You can specify specific origins instead of ""
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -24,11 +32,6 @@ api_route.include_router(product.product, prefix="/product", tags=[product])
 api_route.include_router(transaction.transaction, prefix="/transaction", tags=[transaction])
 
 app.include_router(api_route)
-
-# close database
-@api_route.on_event("shutdown")
-def shutdown_db_section():
-    database.shutdown_db_section()
 
 if __name__ == '__main__':
     import uvicorn
