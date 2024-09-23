@@ -15,7 +15,6 @@ function MyAreaChart({ data }) {
       },
     },
   };
-
   return <Line data={data} options={options} />;
 }
 
