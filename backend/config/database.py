@@ -18,4 +18,5 @@ Base = declarative_base()
 db = SessionLocal()
 
 def shutdown_db_section():
+    print('[DATABASE]: database has been close')
     db.close()
