@@ -61,10 +61,6 @@
   box-sizing: border-box;
 }
 
-.card {
-  /* height: 100%; Ensure card takes full height of the column */
-}
-
 .card-body {
   padding: 0;
 }
