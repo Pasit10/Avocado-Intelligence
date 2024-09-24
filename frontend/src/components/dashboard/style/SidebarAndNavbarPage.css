@@ -1,8 +1,12 @@
 .custom-containersidebar {
-    width: 15vw; /* Sidebar width adjusted */
-    height: 100vh; /* Full height */
-    padding: 0px; /* Remove default padding */
-    background-color: #d3d3d3; /* Light grey background similar to the image */
+    width: 15vw;
+    /* Sidebar width adjusted */
+    height: 100vh;
+    /* Full height */
+    padding: 0px;
+    /* Remove default padding */
+    background-color: #d3d3d3;
+    /* Light grey background similar to the image */
     position: fixed;
     top: 0;
     left: 0;
@@ -11,57 +15,85 @@
 }
 
 .custom-containersidebar ul {
-    list-style: none; /* Remove default list style */
-    padding: 0; /* Remove padding */
-    margin: 0; /* Remove margin */
+    list-style: none;
+    /* Remove default list style */
+    padding: 0;
+    /* Remove padding */
+    margin: 0;
+    /* Remove margin */
     margin-top: 40%;
 }
 
 .custom-containersidebar .nav-item {
-    display: flex; /* Flex layout to align icon and text */
-    align-items: center; /* Align icon and text vertically */
-    padding: 10px 20px; /* Add padding to the items */
-    color: black; /* Text color */
+    display: flex;
+    /* Flex layout to align icon and text */
+    align-items: center;
+    /* Align icon and text vertically */
+    padding: 10px 20px;
+    /* Add padding to the items */
+    color: black;
+    /* Text color */
 }
 
 .custom-containersidebar .nav-item a {
-    text-decoration: none; /* Remove underline from links */
-    color: black; /* Link color */
-    margin-left: 10px; /* Space between icon and text */
+    text-decoration: none;
+    /* Remove underline from links */
+    color: black;
+    /* Link color */
+    margin-left: 10px;
+    /* Space between icon and text */
 }
 
 .custom-containersidebar .nav-item .icon {
-    margin-right: 10px; /* Space between icon and text */
+    margin-right: 10px;
+    /* Space between icon and text */
 }
 
 /* Add hover effect */
 .custom-containersidebar .nav-item:hover {
-    background-color: #bfbfbf; /* Lighter gray on hover */
-    cursor: pointer; /* Show pointer on hover */
+    background-color: #bfbfbf;
+    /* Lighter gray on hover */
+    cursor: pointer;
+    /* Show pointer on hover */
 }
 
 
 .custom-containernavbar {
-    width: calc(100vw - 15vw); /* Navbar takes up the remaining 87% of width */
-    height: 14vh; /* Navbar height */
-    padding: 20px; /* Adjusted padding */
-    background-color: #f3c3c3; /* Light grey background */
-    position: fixed; /* Navbar stays fixed at the top */
+    width: calc(100vw - 15vw);
+    /* Navbar takes up the remaining 87% of width */
+    height: 14vh;
+    /* Navbar height */
+    padding: 20px;
+    /* Adjusted padding */
+    background-color: #f3c3c3;
+    /* Light grey background */
+    position: fixed;
+    /* Navbar stays fixed at the top */
     top: 0;
-    left: 15vw; /* To prevent overlap with the sidebar */
+    left: 15vw;
+    /* To prevent overlap with the sidebar */
     display: flex;
-    flex-direction: column; /* Stack elements vertically */
-    justify-content: center; /* Center elements vertically */
-    align-items: center; /* Center elements horizontally */
-    box-sizing: border-box; /* Include padding in the element's size */
+    flex-direction: column;
+    /* Stack elements vertically */
+    justify-content: center;
+    /* Center elements vertically */
+    align-items: center;
+    /* Center elements horizontally */
+    box-sizing: border-box;
+    /* Include padding in the element's size */
+    min-height: auto;
 }
 
 .navbar-header {
     display: flex;
-    justify-content: start; /* Center title horizontally */
-    align-items: start; /* Center items vertically */
-    width: 100%; /* Take full width of the navbar */
-    position: relative; /* Ensure buttons stay in place with absolute positioning */
+    justify-content: start;
+    /* Center title horizontally */
+    align-items: start;
+    /* Center items vertically */
+    width: 100%;
+    /* Take full width of the navbar */
+    position: relative;
+    /* Ensure buttons stay in place with absolute positioning */
 }
 
 .navbar-title {
@@ -71,28 +103,119 @@
     padding-top: 50px;
 }
 
-.navbar-buttons {
-    position: absolute; /* Position buttons at the right side */
-    right: 30px; /* Adjust button placement from the right */
+.navbar-container-buttons {
+    position: absolute;
+    /* Position buttons at the right side */
+    right: 30px;
+    /* Adjust button placement from the right */
     display: flex;
     margin-bottom: 30px;
 }
 
-.navbar-buttons button {
-    margin-left: 40px; /* Adjust button spacing */
-    padding: 6px 30px; /* Button padding */
-    font-size: 16px; /* Button font size */
-    white-space: nowrap; /* Prevent buttons from breaking lines */
+.navbar-container-buttons button {
+    margin-left: 40px;
+    /* Adjust button spacing */
+    padding: 6px 30px;
+    /* Button padding */
+    font-size: 16px;
+    /* Button font size */
+    white-space: nowrap;
+    /* Prevent buttons from breaking lines */
 }
 
 .search-container {
     display: flex;
-    justify-content: flex-end; /* Align the search input to the right */
-    margin-bottom:30px; /* Space above the search input */
+    justify-content: flex-end;
+    /* Align the search input to the right */
+    margin-bottom: 30px;
+    /* Space above the search input */
     width: 100%;
 }
 
 .search-container input {
-    width: 30%; /* Adjust input width */
-    max-width: 300px; /* Set a max width for the search input */
+    width: 30%;
+    /* Adjust input width */
+    max-width: 300px;
+    /* Set a max width for the search input */
+}
+
+.modal-title-input {
+    text-align: start;
+}
+
+.custom-file-upload {
+    display: inline-block;
+    padding: 60px 30px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f8f9fa;
+    color: #005cb8;
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.custom-file-upload:hover {
+    background-color: #e2e6ea;
+    /* Change background color on hover */
+}
+
+.btn-sm{
+    display: inline-block;
+    padding: 10px 10px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f8f9fa;
+    color: #005cb8;
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.custom-containercontent {
+    width: 15vw;
+    /* Sidebar width adjusted */
+    height: 100vh;
+    /* Full height */
+    padding: 0px;
+    /* Remove default padding */
+    background-color: #d3d3d3;
+    /* Light grey background similar to the image */
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 15vw 1fr; /* Sidebar takes 15vw, content takes the rest */
+    grid-template-rows: 14vh 1fr; /* Navbar height (14vh) and the remaining space for content */
+    height: 100vh; /* Full height */
+}
+
+.content-container {
+    grid-column: 2; /* Only occupy the second column */
+    grid-row: 2; /* Position below the navbar */
+    margin-left: 0; /* Ensure no margin on the left */
+    display: flex; /* Enable flexbox */
+    flex-direction: column; /* Stack items vertically */
+    align-items: flex-start; /* Align items to the start (left) */
+    justify-content: flex-start; /* Align items to the top */
+}
+
+.container-fluid{
+    font-size: 50px;
+    text-align: start;
+    border-radius: 20px;
+    background-color: #005cb8;
+    width: 83%;
+    height: 80%;
+    align-items: center;
+    justify-content: center;
+    margin-top: 50px;
+    margin-left: 10px;
+    position: fixed;
+    
 }
