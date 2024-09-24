@@ -1,9 +1,11 @@
 from fastapi import HTTPException, status
-from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 from . import model, schemas
 from config.database import db
 
+def getAllProduct():
+    product_all = db.query(model.Product).all()
+    return product_all
 
 def getProductByID(product_id:int):
     product = db.query(model.Product).filter(model.Product.product_id == product_id).first()
