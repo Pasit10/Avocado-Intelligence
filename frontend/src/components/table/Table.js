@@ -160,7 +160,7 @@ const Table = ({ name, data, columns, Box, activateCheckBox, isLoading}) => {
                                 <button type="button" className="btn-close" onClick={handleCloseModal}></button>
                             </div>
                             <div className="modal-body">
-                                <Box id={selectedItemId} />
+                                <Box id={selectedItemId}     />
                             </div>
                         </div>
                     </div>
