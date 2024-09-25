@@ -5,11 +5,12 @@ import Table from './components/table/Table';
 import BoxProduct from './components/boxs/BoxProduct';
 import BoxTransactions from './components/boxs/BoxTransaction';
 import util from './util/util';
+import SidebarAndNavbarPage from './components/dashboard/SidebarAndNavbarPage';
 
 function App() {
-  const [dashboardVisible, setDashBoardVisible] = useState(false);
+  const [dashboardVisible, setDashBoardVisible] = useState(true);
   const [productsVisible, setProductVisible] = useState(false);
-  const [transactionsVisible, setTransactionsVisible] = useState(true);
+  const [transactionsVisible, setTransactionsVisible] = useState(false);
 
   const [query, setQuery] = useState('transactions');
   const [data, setData] = useState([]);
@@ -31,6 +32,7 @@ function App() {
     <div className="App">
       {dashboardVisible && (
         <div>
+          <SidebarAndNavbarPage/>
         </div>
       )}
       {productsVisible && (
