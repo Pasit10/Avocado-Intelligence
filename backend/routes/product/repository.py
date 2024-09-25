@@ -1,21 +1,25 @@
 from fastapi import HTTPException, status
-from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 from . import model, schemas
 from config.database import db
 
+def getAllProduct():
+    product_all = db.query(model.Product).all()
+    return product_all
 
 def getProductByID(product_id:int):
     product = db.query(model.Product).filter(model.Product.product_id == product_id).first()
     return product
 
-def __getLastProductID():
-    product_lastID = db.query(model.Product).order_by(model.Product.product_id.desc()).first().product_id
-    return product_lastID
+def __getNextProductID():
+    product = db.query(model.Product).order_by(model.Product.product_id.desc()).first()
+    if not product:
+        return 0
+    return product.product_id + 1
 
 def addProduct(request_product: schemas.ProductCreate):
     db_product = model.Product(
-        product_id=__getLastProductID() + 1,
+        product_id=__getNextProductID(),
         name=request_product.name,
         price=request_product.price,
         detail=request_product.detail,

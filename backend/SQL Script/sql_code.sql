@@ -1,5 +1,9 @@
 USE Ethnicity_Detection_Model;
 
+DROP TABLE transaction;
+DROP TABLE product;
+DROP TABLE customer_transaction;
+
 CREATE TABLE customer_transaction (
     customer_id INT NOT NULL,
     sex VARCHAR(255),
@@ -30,10 +34,6 @@ CREATE TABLE transaction (
 -- test data part
 -- table product
 USE Ethnicity_Detection_Model;
-DROP TABLE transaction;
-DROP TABLE product;
-DROP TABLE customer_transaction;
-
 
 INSERT INTO product (product_id, name, price, detail, product_img) VALUES
 (1, 'Product A', 100, 'Details for Product A', NULL),
