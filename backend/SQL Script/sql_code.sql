@@ -4,7 +4,7 @@ DROP TABLE transaction;
 DROP TABLE product;
 DROP TABLE customer_transaction;
 
-CREATE TABLE customer_transaction (
+CREATE TABLE customer (
     customer_id INT NOT NULL,
     sex VARCHAR(255),
     age INT,
@@ -27,7 +27,7 @@ CREATE TABLE transaction (
     qty INT,
     transaction_date date,
     PRIMARY KEY (customer_id, product_id),
-    FOREIGN KEY (customer_id) REFERENCES customer_transaction(customer_id),
+    FOREIGN KEY (customer_id) REFERENCES customer(customer_id),
     FOREIGN KEY (product_id) REFERENCES product(product_id)
 );
 
