@@ -11,7 +11,7 @@ def getAllCustomer():
     return customer
 
 @customer.get("/getcustomer/{customer_id}",status_code=status.HTTP_200_OK,response_model=schemas.CustomerResponse)
-def getCustomerByID(customer_id):
+def getCustomerByID(customer_id:int):
     if customer_id < 0:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail='customer_id less than zero')
 
@@ -26,5 +26,17 @@ def addCustomer(request_customer: schemas.CustomerRequest):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail='customer image is empty')
 
     customer_img = processimage.processIMG(request_customer.customer_img)
-    processimage.predict(customer_img)
+    result_list = processimage.predict(customer_img)
+
+    request_create = schemas.CustomerCreate(
+        sex=result_list[0],
+        age=result_list[1],
+        race=result_list[2]
+    )
+    repository.addCustomer(request_create)
+
+    return {
+        "code": status.HTTP_201_CREATED,
+        "message": "customer add in database",
+    }
 

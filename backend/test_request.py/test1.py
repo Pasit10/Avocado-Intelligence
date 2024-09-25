@@ -13,6 +13,6 @@ json_data = {
 }
 
 # Send POST request with image data in JSON
-requests.post("http://localhost:8080/customer/addcustomer", json=json_data)
+response = requests.post("http://localhost:8080/customer/addcustomer", json=json_data)
 
-#print(response.json())
+print(response.json())
