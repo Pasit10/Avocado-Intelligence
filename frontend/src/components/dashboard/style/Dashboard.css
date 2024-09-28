@@ -46,7 +46,7 @@
   
 #content {
   flex: 1;
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 
 .dashboard-row {
@@ -59,10 +59,6 @@
   flex: 1 0 33%; /* 3 columns layout */
   padding: 10px; /* Adjust spacing */
   box-sizing: border-box;
-}
-
-.card {
-  /* height: 100%; Ensure card takes full height of the column */
 }
 
 .card-body {
