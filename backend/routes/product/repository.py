@@ -55,11 +55,11 @@ def updateProduct(product_id:int, update_request:schemas.ProductUpdate):
         db.refresh(product)
     except SQLAlchemyError as e:
         db.rollback()  # Rollback the transaction in case of error
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Error adding product") from e
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Error to update product") from e
 
 def deleteProduct(product:schemas.ProductCreate):
     try:
         db.delete(product)
         db.commit()
     except SQLAlchemyError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Error adding product") from e
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Error to delete product") from e

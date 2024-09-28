@@ -33,10 +33,29 @@ def addCustomer(request_customer: schemas.CustomerRequest):
         age=result_list[1],
         race=result_list[2]
     )
-    repository.addCustomer(request_create)
+    response_customer_id = repository.addCustomer(request_create)
+
+    response_customer = schemas.CustomerResponse(
+        customer_id=response_customer_id,
+        sex=request_create.sex,
+        age=request_create.age,
+        race=request_create.race
+    )
 
     return {
         "code": status.HTTP_201_CREATED,
         "message": "customer add in database",
+        "detail" : response_customer
     }
 
+@customer.delete(path="/deletecustomer/{customer_id}",status_code=status.HTTP_200_OK)
+def deleteCustomer(customer_id:int):
+    if customer_id < 0:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail='customer_id less than zero')
+
+    customer = repository.findCustomerByID(customer_id)
+    if not customer:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail='customer not found')
+
+    repository.deleteCustomer(customer)
+    return status.HTTP_200_OK

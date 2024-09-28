@@ -6,13 +6,11 @@ import base64
 from io import BytesIO
 
 import random
-
-PATH_MODEL = "model/uFvgg16_augment_81.keras"
-PATH_WEIGHTS = "model/model_by_dear_weights.weights.h5"
+import constants
 
 try :
-    model = tf.keras.models.load_model(PATH_MODEL,compile=False)
-    model.load_weights(PATH_WEIGHTS)
+    model = tf.keras.models.load_model(constants.PATH_MODEL,compile=False)
+    model.load_weights(constants.PATH_WEIGHTS)
     # model.summary()
 except FileNotFoundError :
     print("[model]: model not found")

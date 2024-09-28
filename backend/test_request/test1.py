@@ -3,7 +3,7 @@ import base64
 
 # Read image and encode it as base64
 
-with open("backend/test_request/10_0_4_20170103201924664.jpg.chip.jpg", "rb") as image_file:
+with open("backend/test_request/105_1_1_20170112213303693.jpg.chip.jpg", "rb") as image_file:
     encoded_image = base64.b64encode(image_file.read()).decode('utf-8')
 
 #print(encoded_image)

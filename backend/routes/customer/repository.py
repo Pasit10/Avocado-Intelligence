@@ -32,3 +32,16 @@ def addCustomer(request_create:schemas.CustomerCreate):
     except SQLAlchemyError as e:
         db.rollback()  # Rollback the transaction in case of error
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Error adding product") from e
+
+    return db_customer.customer_id
+
+def findCustomerByID(customer_id:int):
+    customer = db.query(model.Customer).filter(model.Customer.customer_id == customer_id).first()
+    return customer
+
+def deleteCustomer(customer:schemas.CustomerRequest):
+    try:
+        db.delete(customer)
+        db.commit()
+    except SQLAlchemyError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Error to delete product") from e
