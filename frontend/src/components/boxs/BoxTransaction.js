@@ -70,7 +70,9 @@ const BoxTransactions = ({ id }) => {
                             </div>
                             <div className="card-body">
                                 <div className="text-start">
-                                    <p className="card-text">
+                                    <p className="card-text" style={{
+                                        padding: "10px",
+                                    }}>
                                         <strong>ID:</strong> {transactionData.id} <br />
                                         <strong>Gender:</strong> {transactionData.gender} <br />
                                         <strong>Age:</strong> {transactionData.age} <br />

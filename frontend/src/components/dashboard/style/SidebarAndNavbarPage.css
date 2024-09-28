@@ -59,61 +59,38 @@
 
 
 .custom-containernavbar {
-    width: calc(100vw - 15vw);
-    /* Navbar takes up the remaining 87% of width */
-    height: 14vh;
-    /* Navbar height */
+    width: 100%;
+    height: 100px;
     padding: 20px;
-    /* Adjusted padding */
     background-color: #f3c3c3;
-    /* Light grey background */
     position: fixed;
-    /* Navbar stays fixed at the top */
-    top: 0;
     left: 15vw;
-    /* To prevent overlap with the sidebar */
     display: flex;
-    flex-direction: column;
-    /* Stack elements vertically */
-    justify-content: center;
-    /* Center elements vertically */
-    align-items: center;
-    /* Center elements horizontally */
+    flex-direction: row;
     box-sizing: border-box;
-    /* Include padding in the element's size */
-    min-height: auto;
+    justify-content: space-between;
+    z-index: 1;
 }
 
 .navbar-header {
-    display: flex;
-    justify-content: start;
-    /* Center title horizontally */
-    align-items: start;
-    /* Center items vertically */
-    width: 100%;
-    /* Take full width of the navbar */
-    position: relative;
-    /* Ensure buttons stay in place with absolute positioning */
+    /* width: 100%; */
 }
 
 .navbar-title {
     font-size: 40px;
     margin: 0;
-    text-align: center;
-    padding-top: 50px;
+    text-align: start;
 }
 
 .navbar-container-buttons {
-    position: absolute;
-    /* Position buttons at the right side */
-    right: 30px;
-    /* Adjust button placement from the right */
     display: flex;
-    margin-bottom: 30px;
+    margin: 10px;
+    flex-direction: row;
+    justify-content: space-between;
+
 }
 
 .navbar-container-buttons button {
-    margin-left: 40px;
     /* Adjust button spacing */
     padding: 6px 30px;
     /* Button padding */
@@ -124,19 +101,14 @@
 }
 
 .search-container {
-    display: flex;
+    /* display: flex; */
     justify-content: flex-end;
-    /* Align the search input to the right */
-    margin-bottom: 30px;
-    /* Space above the search input */
+    margin: 10px;
     width: 100%;
 }
 
 .search-container input {
-    width: 30%;
-    /* Adjust input width */
-    max-width: 300px;
-    /* Set a max width for the search input */
+    width: 100%;
 }
 
 .modal-title-input {
@@ -160,7 +132,7 @@
     /* Change background color on hover */
 }
 
-.btn-sm{
+.btn-sm {
     display: inline-block;
     padding: 10px 10px;
     cursor: pointer;
@@ -190,32 +162,27 @@
 
 .grid-container {
     display: grid;
-    grid-template-columns: 15vw 1fr; /* Sidebar takes 15vw, content takes the rest */
-    grid-template-rows: 14vh 1fr; /* Navbar height (14vh) and the remaining space for content */
-    height: 100vh; /* Full height */
+    grid-template-columns: 15vw 1fr;
+    /* Sidebar takes 15vw, content takes the rest */
+    grid-template-rows: 14vh 1fr;
+    /* Navbar height (14vh) and the remaining space for content */
+    height: 100vh;
+    /* Full height */
 }
 
 .content-container {
-    grid-column: 2; /* Only occupy the second column */
-    grid-row: 2; /* Position below the navbar */
-    margin-left: 0; /* Ensure no margin on the left */
-    display: flex; /* Enable flexbox */
-    flex-direction: column; /* Stack items vertically */
-    align-items: flex-start; /* Align items to the start (left) */
-    justify-content: flex-start; /* Align items to the top */
-}
-
-.container-fluid{
-    font-size: 50px;
-    text-align: start;
-    border-radius: 20px;
-    background-color: #005cb8;
-    width: 83%;
-    height: 80%;
-    align-items: center;
-    justify-content: center;
-    margin-top: 50px;
-    margin-left: 10px;
-    position: fixed;
-    
+    grid-column: 2;
+    /* Only occupy the second column */
+    grid-row: 2;
+    /* Position below the navbar */
+    margin-top: 10px;
+    /* Ensure no margin on the left */
+    display: flex;
+    /* Enable flexbox */
+    flex-direction: column;
+    /* Stack items vertically */
+    align-items: flex-start;
+    /* Align items to the start (left) */
+    justify-content: flex-start;
+    /* Align items to the top */
 }

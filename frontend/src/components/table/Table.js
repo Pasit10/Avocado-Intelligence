@@ -2,17 +2,13 @@ import React, { useState, useEffect } from 'react';
 
 import Loading from '../loading/Loading';
 
-const Table = ({ name, data, columns, Box, activateCheckBox, isLoading}) => {
+const Table = ({ name, data, columns, Box, activateCheckBox, isLoading, activateQuantity, setData, setProductList }) => {
     const [sortConfig, setSortConfig] = useState({ key: 'id', direction: 'ascending' });
     const [selectedRows, setSelectedRows] = useState(new Set());
     const [sortedData, setSortedData] = useState([]);
 
     const [boxVisible, setBoxVisible] = useState(false);
     const [selectedItemId, setselectedItemId] = useState("");
-
-    useEffect(() => {
-        console.log(selectedRows);
-    }, [selectedRows]);
 
     const handleSort = (key) => {
         let direction = sortConfig.direction === 'ascending' ? 'descending' : 'ascending';
@@ -31,27 +27,70 @@ const Table = ({ name, data, columns, Box, activateCheckBox, isLoading}) => {
         });
 
         setSortedData(sorted);
-    }, [sortConfig, data])
+    }, [sortConfig, data]);
 
-    const handleCheckboxChange = (id) => {
+    const handleCheckboxChange = (item) => {
         const newSelectedRows = new Set(selectedRows);
-        if (newSelectedRows.has(id)) {
-            newSelectedRows.delete(id);
+        if (newSelectedRows.has(item)) {
+            newSelectedRows.delete(item);
+            item.quantity = 0;
         } else {
-            newSelectedRows.add(id);
+            newSelectedRows.add(item);
+            item.quantity = 1;
         }
         setSelectedRows(newSelectedRows);
+        setProductList(newSelectedRows);
     };
 
     const handleExtendObject = (id) => {
-        console.log(id);
         setBoxVisible(true);
         setselectedItemId(id);
-    }
-    const handleCloseModal = () => {
-        setBoxVisible(false); // Hide the modal
-        setselectedItemId(null); // Clear the selected product ID
     };
+
+    const handleCloseModal = () => {
+        setBoxVisible(false);
+        setselectedItemId(null);
+    };
+
+    const handleIncrementQuantity = (itemId) => {
+        setData(prevData => {
+            const updatedData = [...prevData]; // create a shallow copy of the array
+            const item = updatedData.find(item => item.id === itemId); // find the item by id
+            if (item) {
+                item.quantity += 1; // directly update the quantity in the found item
+            }
+            return updatedData;
+        });
+    };
+
+    const handleDecrementQuantity = (itemId) => {
+        setData(prevData => {
+            const updatedData = [...prevData]; // create a shallow copy of the array
+            const item = updatedData.find(item => item.id === itemId); // find the item by id
+            if (item && item.quantity > 0) {
+                item.quantity -= 1; // directly update the quantity in the found item
+                if (item && selectedRows.has(item) && item.quantity === 0) {
+                    selectedRows.delete(item);
+                    return selectedRows;
+                }
+            }
+            return updatedData;
+        });
+    };
+
+    const handleSelectAll = () => {
+        if (selectedRows.size === data.length) {
+            setSelectedRows(new Set());
+            setProductList(new Set());
+        } else {
+            const allSelectedItems = new Set(data.map(item => {
+                item.quantity = 1;
+                return item;
+            }));
+            setSelectedRows(allSelectedItems);
+            setProductList(allSelectedItems);
+        }
+    }
 
     const thStyle = {
         position: 'relative',
@@ -71,13 +110,13 @@ const Table = ({ name, data, columns, Box, activateCheckBox, isLoading}) => {
         whiteSpace: 'nowrap',
         display: 'flex',
         justifyContent: 'flex-start',
-    }
+    };
 
     const styleBox = {
         display: 'block',
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        transition: "transform 0.9s ease-out, opacity 0.6s ease-out", /* Increase duration to 0.6s for a slower effect */
-    }
+        transition: 'transform 0.9s ease-out, opacity 0.6s ease-out',
+    };
 
     return (
         <div className="container mt-4">
@@ -86,15 +125,26 @@ const Table = ({ name, data, columns, Box, activateCheckBox, isLoading}) => {
                     <tr>
                         <th style={checkboxIdStyle}>
                             {activateCheckBox && (
-                                <input type="checkbox" onChange={() => {
-                                    if (selectedRows.size === data.length) {
-                                        setSelectedRows(new Set());
-                                    } else {
-                                        setSelectedRows(new Set(data.map(item => item.id)));
-                                    }
-                                }} checked={selectedRows.size === data.length && data.length > 0} />
+                                <input
+                                    type="checkbox"
+                                    onChange={() => {
+                                        if (activateQuantity) {
+                                            handleSelectAll()
+                                        }
+                                        else {
+                                            if (selectedRows.size === data.length) {
+                                                setSelectedRows(new Set());
+                                            } else {
+                                                setSelectedRows(new Set(data.map(item => item)));
+                                            }
+                                        }
+                                    }}
+                                    checked={selectedRows.size === data.length && data.length > 0}
+                                />
                             )}
-                            <div className="cursor-pointer" style={{ marginLeft: '30%' , cursor: 'pointer'}} onClick={() => { handleSort('id') }}>ID</div>
+                            <div className="cursor-pointer" style={{ marginLeft: '30%', cursor: 'pointer' }} onClick={() => { handleSort('id') }}>
+                                ID
+                            </div>
                             {sortConfig.key === 'id' ? (sortConfig.direction === 'ascending' ? <span style={sortSymbolStyle}>▲</span> : <span style={sortSymbolStyle}>▼</span>) : ''}
                         </th>
                         {columns.map((item, index) => (
@@ -109,12 +159,20 @@ const Table = ({ name, data, columns, Box, activateCheckBox, isLoading}) => {
                                 ) : ''}
                             </th>
                         ))}
+                        {activateQuantity && (
+                            <th style={thStyle} >
+                                <div onClick={() => { handleSort('quantity') }}>
+                                    Quantity
+                                </div>
+                                {sortConfig.key === 'quantity' ? (sortConfig.direction === 'ascending' ? <span style={sortSymbolStyle}>▲</span> : <span style={sortSymbolStyle}>▼</span>) : ''}
+                            </th>
+                        )}
                     </tr>
                 </thead>
                 <tbody>
                     {isLoading ? (
                         <tr>
-                            <td colSpan={columns.length + 1} style={{ textAlign: 'center', padding: '2em' }}>
+                            <td colSpan={columns.length + 1 + (activateQuantity ? 1 : 0)} style={{ textAlign: 'center', padding: '2em' }}>
                                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                     <Loading />
                                 </div>
@@ -122,7 +180,7 @@ const Table = ({ name, data, columns, Box, activateCheckBox, isLoading}) => {
                         </tr>
                     ) : sortedData.length === 0 ? (
                         <tr>
-                            <td colSpan={columns.length + 1} style={{ textAlign: 'center', padding: '2em' }}>
+                            <td colSpan={columns.length + 1 + (activateQuantity ? 1 : 0)} style={{ textAlign: 'center', padding: '2em' }}>
                                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                     No data available
                                 </div>
@@ -135,17 +193,52 @@ const Table = ({ name, data, columns, Box, activateCheckBox, isLoading}) => {
                                     {activateCheckBox && (
                                         <input
                                             type="checkbox"
-                                            checked={selectedRows.has(item.id)}
-                                            onChange={() => handleCheckboxChange(item.id)}
+                                            checked={selectedRows.has(item)}
+                                            onChange={() => {
+                                                if (activateQuantity) {
+                                                    handleCheckboxChange(item)
+                                                }
+                                                else {
+                                                    const newSelectedRows = new Set(selectedRows);
+                                                    if (newSelectedRows.has(item)) {
+                                                        newSelectedRows.delete(item);
+                                                    } else {
+                                                        newSelectedRows.add(item);
+                                                    }
+                                                    setSelectedRows(newSelectedRows);
+                                                }
+
+                                            }}
                                         />
                                     )}
-                                    <div className="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" style={{ marginLeft: "30%", cursor: "pointer" }} onClick={() => {
-                                        handleExtendObject(item.id)
-                                    }}>{item.id}</div>
+                                    <div className="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" style={{ marginLeft: '30%', cursor: 'pointer' }} onClick={() => {
+                                        handleExtendObject(item.id);
+                                    }}>
+                                        {item.id}
+                                    </div>
                                 </td>
                                 {columns.map((col, index) => (
                                     <td key={index}>{item[col.toLowerCase()]}</td>
                                 ))}
+                                {activateQuantity && (
+                                    <td key={index}>
+                                        <button
+                                            style={{ border: "none" }}
+                                            onClick={() => handleDecrementQuantity(item.id)}
+                                            disabled={!selectedRows.has(item)} // Disable if not checked
+                                        >
+                                            -
+                                        </button>
+                                        {item.quantity}
+                                        <button
+                                            style={{ border: "none" }}
+                                            onClick={() => handleIncrementQuantity(item.id)}
+                                            disabled={!selectedRows.has(item)} // Disable if not checked
+                                        >
+                                            +
+                                        </button>
+                                    </td>
+                                )}
                             </tr>
                         ))
                     )}
@@ -160,13 +253,13 @@ const Table = ({ name, data, columns, Box, activateCheckBox, isLoading}) => {
                                 <button type="button" className="btn-close" onClick={handleCloseModal}></button>
                             </div>
                             <div className="modal-body">
-                                <Box id={selectedItemId}     />
+                                <Box id={selectedItemId} />
                             </div>
                         </div>
                     </div>
                 </div>
             )}
-        </div >
+        </div>
     );
 };
 
