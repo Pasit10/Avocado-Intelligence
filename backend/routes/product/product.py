@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from typing import List
 
-from . import repository, model, schemas
+from . import repository, schemas
 
 product = APIRouter()
 
@@ -17,6 +17,7 @@ def get_product_byID(product_id:int):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail='product_id less than zero')
 
     product = repository.getProductByID(product_id)
+    print(product)
     if not product:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail='product not found')
 
@@ -42,11 +43,11 @@ def add_product(request_product: schemas.ProductCreate):
 def update_product(product_id:int,update_request:schemas.ProductUpdate):
     if product_id < 0:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail='product_id less than zero')
-    product = repository.findProductByID(product_id)
+    product = repository.findProductForUpdateByID(product_id)
     if not product:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail='product not found')
-
-    repository.updateProduct(product_id, update_request)
+    print(product)
+    # repository.updateProduct(product_id, update_request)
     return {
         "code": status.HTTP_200_OK,
         "message": "Update product to database",

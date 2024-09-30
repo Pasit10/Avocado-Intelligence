@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import relationship
 
 from config.database import Base
 
@@ -9,3 +10,5 @@ class Customer(Base):
     sex = Column(String[255])
     age = Column(Integer)
     race = Column(String[255])
+
+    transactions = relationship("Transaction", back_populates="customer")

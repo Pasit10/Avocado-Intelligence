@@ -1,24 +1,26 @@
 from fastapi import HTTPException, status
 from sqlalchemy.exc import SQLAlchemyError
-from . import model, schemas
+
+from . import schemas
 from config.database import db
+from model.product import Product
 
 def getAllProduct():
-    product_all = db.query(model.Product).all()
+    product_all = db.query(Product).all()
     return product_all
 
 def getProductByID(product_id:int):
-    product = db.query(model.Product).filter(model.Product.product_id == product_id).first()
+    product = db.query(Product).filter(Product.product_id == product_id).first()
     return product
 
 def __getNextProductID():
-    product = db.query(model.Product).order_by(model.Product.product_id.desc()).first()
+    product = db.query(Product).order_by(Product.product_id.desc()).first()
     if not product:
         return 0
     return product.product_id + 1
 
 def addProduct(request_product: schemas.ProductCreate):
-    db_product = model.Product(
+    db_product = Product(
         product_id=__getNextProductID(),
         name=request_product.name,
         price=request_product.price,
@@ -34,12 +36,13 @@ def addProduct(request_product: schemas.ProductCreate):
         db.rollback()  # Rollback the transaction in case of error
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Error adding product") from e
 
-async def findProductByID(product_id:int):
-    product = db.query(model.Product).filter(model.Product.product_id == product_id).first()
+def findProductByID(product_id:int):
+    product = db.query(Product).filter(Product.product_id == product_id).first()
     return product
 
 def findProductForUpdateByID(product_id:int):
-    product = db.query(model.Product).filter(model.Product.product_id == product_id).first()
+    product = db.query(Product).filter(Product.product_id == product_id).first()
+    print("test ",product)
     return product
 
 def updateProduct(product_id:int, update_request:schemas.ProductUpdate):

@@ -1,24 +1,26 @@
 from fastapi import HTTPException, status
 from sqlalchemy.exc import SQLAlchemyError
-from . import model, schemas
+
+from . import schemas
 from config.database import db
+from model.customer import Customer
 
 def getAllCustomer():
-    customer_all = db.query(model.Customer).all()
+    customer_all = db.query(Customer).all()
     return customer_all
 
 def getCustomerByID(customer_id:int):
-    customer = db.query(model.Customer).filter(model.Customer.customer_id == customer_id).first()
+    customer = db.query(Customer).filter(Customer.customer_id == customer_id).first()
     return customer
 
 def __getNextCustomerID():
-    customer = db.query(model.Customer).order_by(model.Customer.customer_id.desc()).first()
+    customer = db.query(Customer).order_by(Customer.customer_id.desc()).first()
     if not customer:
         return 1
     return customer.customer_id + 1
 
 def addCustomer(request_create:schemas.CustomerCreate):
-    db_customer = model.Customer(
+    db_customer = Customer(
         customer_id=__getNextCustomerID(),
         sex=request_create.sex,
         age=request_create.age,
@@ -36,7 +38,7 @@ def addCustomer(request_create:schemas.CustomerCreate):
     return db_customer.customer_id
 
 def findCustomerByID(customer_id:int):
-    customer = db.query(model.Customer).filter(model.Customer.customer_id == customer_id).first()
+    customer = db.query(Customer).filter(Customer.customer_id == customer_id).first()
     return customer
 
 def deleteCustomer(customer:schemas.CustomerRequest):
