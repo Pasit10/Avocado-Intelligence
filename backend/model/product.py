@@ -1,4 +1,6 @@
 from sqlalchemy import Column, Integer, String, Float, LargeBinary
+from sqlalchemy.orm import relationship
+
 from config.database import Base
 
 class Product(Base):
@@ -9,3 +11,5 @@ class Product(Base):
     price = Column(Float)
     detail = Column(String[255])
     product_img = Column(LargeBinary)
+
+    transactions = relationship("Transaction", back_populates="product")
