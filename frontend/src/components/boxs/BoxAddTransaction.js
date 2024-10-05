@@ -7,11 +7,12 @@ const BoxAddTransaction = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [searchState, setSearchState] = useState(false);
     const [listProduct, setListProduct] = useState([]);
+    const [selectedRows, setSelectedRows] = useState(new Set());
 
     useEffect(() => {
         const fetchData = async () => {
             setIsLoading(true);
-            const result = await util.fetchData('products');
+            const result = await util.fetchData('product/getproduct');
             const updatedData = result.map(item => ({
                 ...item,
                 quantity: 0,
@@ -24,8 +25,9 @@ const BoxAddTransaction = () => {
     }, []);
 
     useEffect(() => {
-        console.log(listProduct);
-    }, [listProduct]);
+        setListProduct(Array.from(selectedRows))
+        console.log(selectedRows);
+    }, [selectedRows]);
 
     const toggleSearch = () => {
         setSearchState(true);
@@ -59,23 +61,26 @@ const BoxAddTransaction = () => {
                     <Table
                         name={''}
                         data={data}
-                        columns={['Name']}
+                        columns={['Product_id', 'Name']}
                         activateCheckBox={true}
                         isLoading={isLoading}
-                        activateQuantity={true}
                         setData={setData}
-                        setProductList={setListProduct}
+                        selectedRows={selectedRows}
+                        setSelectedRows={setSelectedRows}
+                        isShowList={false}
                     />
                 ) : (
                     <Table
                         name={''}
                         data={listProduct}
-                        columns={['Name']}
+                        columns={['Product_id', 'Name']}
                         activateCheckBox={false}
                         isLoading={false}
                         activateQuantity={true}
                         setData={setListProduct}
-                        setProductList={setListProduct}
+                        selectedRows={selectedRows}
+                        setSelectedRows={setSelectedRows}
+                        isShowList={true}
                     />
                 )}
             </div>

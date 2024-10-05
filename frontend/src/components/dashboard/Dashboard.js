@@ -5,7 +5,7 @@ import { lineChartData, barChartData, doughnutChartData, radarChartData, polarAr
 import MyAreaChart from './MyAreaChart';
 import './style/Dashboard.css';
 
-function Dashboard() {
+function Dashboard({selectedRows, setSelectedRows}) {
   const [fullScreenChart, setFullScreenChart] = useState(null);
 
   const handleFullScreen = (chartType) => {
