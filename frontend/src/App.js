@@ -38,7 +38,7 @@ function App() {
             <Table
               name={"Product"}
               data={data}
-              columns={["Name", "Price"]}
+              columns={["Product_id", "Name", "Price"]}
               Box={BoxProduct}
               activateCheckBox={true}
               isLoading={isLoading} />
@@ -46,7 +46,7 @@ function App() {
             <Table
               name={"Transaction"}
               data={data}
-              columns={["Gender", "Age", "Ethnicity"]}
+              columns={["Transaction_id", "Gender", "Age", "Ethnicity"]}
               Box={BoxTransactions}
               activateCheckBox={true}
               isLoading={isLoading} />

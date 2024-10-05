@@ -28,16 +28,16 @@ const fetchData = async (query) => {
         }
         else if (query === 'transactions') {
             result = [
-                { "id": "00000001", "gender": "man", "age": 100, "ethnicity": "Thai" },
-                { "id": "00000002", "gender": "woman", "age": 85, "ethnicity": "Asian" },
-                { "id": "00000003", "gender": "man", "age": 42, "ethnicity": "Hispanic" },
-                { "id": "00000004", "gender": "woman", "age": 29, "ethnicity": "Caucasian" },
-                { "id": "00000005", "gender": "man", "age": 53, "ethnicity": "African" },
-                { "id": "00000006", "gender": "woman", "age": 67, "ethnicity": "Middle Eastern" },
-                { "id": "00000007", "gender": "man", "age": 38, "ethnicity": "Asian" },
-                { "id": "00000008", "gender": "woman", "age": 45, "ethnicity": "Caucasian" },
-                { "id": "00000009", "gender": "man", "age": 70, "ethnicity": "Hispanic" },
-                { "id": "00000010", "gender": "woman", "age": 25, "ethnicity": "African" }
+                { "transaction_id": "00000001", "gender": "man", "age": 100, "ethnicity": "Thai" },
+                { "transaction_id": "00000002", "gender": "woman", "age": 85, "ethnicity": "Asian" },
+                { "transaction_id": "00000003", "gender": "man", "age": 42, "ethnicity": "Hispanic" },
+                { "transaction_id": "00000004", "gender": "woman", "age": 29, "ethnicity": "Caucasian" },
+                { "transaction_id": "00000005", "gender": "man", "age": 53, "ethnicity": "African" },
+                { "transaction_id": "00000006", "gender": "woman", "age": 67, "ethnicity": "Mtransaction_iddle Eastern" },
+                { "transaction_id": "00000007", "gender": "man", "age": 38, "ethnicity": "Asian" },
+                { "transaction_id": "00000008", "gender": "woman", "age": 45, "ethnicity": "Caucasian" },
+                { "transaction_id": "00000009", "gender": "man", "age": 70, "ethnicity": "Hispanic" },
+                { "transaction_id": "00000010", "gender": "woman", "age": 25, "ethnicity": "African" }
             ];
         }
         else if (query === 'products/id?00000001') {
@@ -357,4 +357,43 @@ const fetchImg = async (query) => {
     return result;
 }
 
-export default { fetchData, fetchImg };
+const fetchPost = async (path, data) => {
+    const url = `${constant.BACKEND_URL}/${path}`;
+    const body = JSON.stringify(data);
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: body
+        });
+
+        const result = await response.json();
+        if (result.code !== 201) {
+            return result.detail[0];
+        }
+        return result;
+    } catch (error) {
+        console.error('Error making POST request:', error);
+        throw error;
+    }
+};
+
+const fetchDelete = async (path, param) => {
+    const url = `${constant.BACKEND_URL}/${path}/${param}`;
+    try {
+        const response = await fetch(url, {
+            method: 'DELETE',
+        });
+
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        console.error('Error making DELETE request:', error);
+        throw error;
+    }
+}
+
+export default { fetchData, fetchImg, fetchPost, fetchDelete };

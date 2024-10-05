@@ -19,7 +19,7 @@ app = FastAPI(lifespan=lifespan)
 #middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[""],  # You can specify specific origins instead of ""
+    allow_origins=["*"],  # You can specify specific origins instead of ""
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
