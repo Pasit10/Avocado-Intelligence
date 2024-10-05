@@ -46,8 +46,8 @@ def update_product(product_id:int,update_request:schemas.ProductUpdate):
     product = repository.findProductForUpdateByID(product_id)
     if not product:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail='product not found')
-    print(product)
-    # repository.updateProduct(product_id, update_request)
+
+    repository.updateProduct(product_id, update_request)
     return {
         "code": status.HTTP_200_OK,
         "message": "Update product to database",

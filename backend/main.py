@@ -6,7 +6,7 @@ from config import database
 from routes.customer import customer
 from routes.product import product
 from routes.transaction import transaction
-from routes import health
+from routes.health import health
 
 # if terminate program -> close database
 @asynccontextmanager

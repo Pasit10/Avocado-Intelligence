@@ -18,3 +18,11 @@ class TransactionCreate(BaseModel):
     product_id: int
     qty: int
     transaction_date: date
+
+class TransactionResponse(BaseModel):
+    customer_id: int
+    product_list: List[productItem]
+    transaction_date: date
+
+    class Config:
+        from_attributes = True

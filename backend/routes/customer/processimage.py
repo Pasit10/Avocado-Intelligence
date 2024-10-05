@@ -6,7 +6,7 @@ import base64
 from io import BytesIO
 
 import random
-import constants
+from constant import constants
 
 try :
     model = tf.keras.models.load_model(constants.PATH_MODEL,compile=False)

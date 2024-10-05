@@ -7,6 +7,10 @@ from model.customer import Customer
 from model.product import Product
 from model.transaction import Transaction
 
+def getAllTransaction():
+    transaction_all = db.query(Transaction).all()
+    return transaction_all
+
 def findCustomerByID(customer_id:int):
     customer = db.query(Customer).filter(Customer.customer_id == customer_id).first()
     return customer
@@ -29,4 +33,16 @@ def addTransaction(transaction_request:schemas.TransactionCreate):
         db.refresh(db_transaction)
     except SQLAlchemyError as e:
         db.rollback()  # Rollback the transaction in case of error
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Error adding product") from e
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Error adding transaction") from e
+
+def findTransactionById(customer_id: int, product_id: int):
+    transaction = db.query(Transaction).filter(Transaction.customer_id == customer_id,Transaction.product_id == product_id).first()
+    return transaction
+
+def deleteTransaction(transaction:schemas.TransactionCreate):
+    try:
+        db.delete(transaction)
+        db.commit()
+    except SQLAlchemyError as e:
+        db.rollback()  # Rollback the transaction in case of error
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Error adding transaction") from e

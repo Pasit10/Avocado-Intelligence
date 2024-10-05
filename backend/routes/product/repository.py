@@ -16,7 +16,7 @@ def getProductByID(product_id:int):
 def __getNextProductID():
     product = db.query(Product).order_by(Product.product_id.desc()).first()
     if not product:
-        return 0
+        return 1
     return product.product_id + 1
 
 def addProduct(request_product: schemas.ProductCreate):
@@ -42,11 +42,11 @@ def findProductByID(product_id:int):
 
 def findProductForUpdateByID(product_id:int):
     product = db.query(Product).filter(Product.product_id == product_id).first()
-    print("test ",product)
     return product
 
 def updateProduct(product_id:int, update_request:schemas.ProductUpdate):
     product = findProductForUpdateByID(product_id)
+
 
     product.name = update_request.name
     product.detail = update_request.detail
