@@ -34,6 +34,7 @@ CREATE TABLE transaction (
 -- test data part
 -- table product
 USE Ethnicity_Detection_Model;
+DELETE FROM transaction;
 DELETE FROM customer;
 
 INSERT INTO product (product_id, name, price, detail, product_img) VALUES
