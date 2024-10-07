@@ -7,5 +7,8 @@ USERNAME = 'username'
 PASSWORD = 'password' # database password
 
 # PATH TO MODEL
-PATH_MODEL = "model/Fvgg16_augment_59.keras"
-PATH_WEIGHTS = "model/model_by_dear_weights.weights.h5"
+PATH_MODEL_AGE = "model/model_age.h5"
+PATH_WEIGHTS_AGE = "model/model_age.h5.weights.h5"
+
+PATH_MODEL_RACE = "model/model_by_dear_race.json"
+PATH_WEIGHTS_RACE = "model/model_by_dear_race_weights.weights.h5"

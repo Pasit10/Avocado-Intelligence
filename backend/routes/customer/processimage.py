@@ -1,19 +1,15 @@
 from fastapi import HTTPException, status
 from PIL import Image
-import tensorflow as tf
+from io import BytesIO
 import numpy as np
 import base64
-from io import BytesIO
 
 import random
-from constant import constants
 
-try :
-    model = tf.keras.models.load_model(constants.PATH_MODEL,compile=False)
-    model.load_weights(constants.PATH_WEIGHTS)
-    # model.summary()
-except FileNotFoundError :
-    print("[model]: model not found")
+from model import model_ai
+
+model_age = model_ai.load_model_age()
+model_race = model_ai.load_model_race()
 
 CLASS_LABEL_SEX_DICT = {
     0: "male",
@@ -44,16 +40,14 @@ def processIMG(customer_img: str):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid image data")
 
 def predict(input_img:np.array):
-    # Make predictions
-    predictions = model.predict(input_img)
-    print(predictions)
+    # predict age
+    predicted_age = model_age.predict(input_img)[0][0]
+    predicted_age = round(predicted_age)
 
-    # Find the index of the class with the highest prediction probability
-    predicted_class_idx = np.argmax(predictions, axis=1)[0]
-    print(predicted_class_idx)
-
-    # Get the corresponding label from the dictionary
-    predicted_race = CLASS_LABEL_RACE_DICT[predicted_class_idx]
+    # predict race
+    race = model_race.predict(input_img)
+    race_class_idx = np.argmax(race, axis=1)[0]
+    predicted_race = CLASS_LABEL_RACE_DICT[race_class_idx]
 
     # make fake data
     output_list = []
@@ -61,5 +55,5 @@ def predict(input_img:np.array):
     output_list.append(random.randint(0,100)) # random age
     output_list.append(random.randint(0,4)) # random race
 
-    return_list = [CLASS_LABEL_SEX_DICT[output_list[0]],output_list[1],predicted_race]
+    return_list = [CLASS_LABEL_SEX_DICT[output_list[0]],predicted_age,predicted_race]
     return return_list
