@@ -2,12 +2,10 @@ import { useState, useEffect } from "react";
 import Table from "../table/Table";
 import util from "../../util/util";
 
-const BoxAddTransaction = () => {
+const BoxAddTransaction = ({ selectedRows, setSelectedRows , listProduct, setListProduct}) => {
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchState, setSearchState] = useState(false);
-    const [listProduct, setListProduct] = useState([]);
-    const [selectedRows, setSelectedRows] = useState(new Set());
 
     useEffect(() => {
         const fetchData = async () => {

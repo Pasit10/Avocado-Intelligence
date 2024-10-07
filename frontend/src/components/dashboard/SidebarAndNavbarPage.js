@@ -7,8 +7,9 @@ import AddProductModal from '../modal/AddProductModal';
 import AddTransactionModal from '../modal/AddTransactionModal';
 import DeleteModal from '../modal/DeleteModal';
 import NotifyModal from '../modal/NotifyModal';
+import BoxAddTransaction from '../boxs/BoxAddTransaction';
 
-function SidebarAndNavbarPage({ ContentComponent, setDashboardVisible, setProductVisible, setTransactionVisible, setQuery, BoxAddTransaction, fetchData }) {
+function SidebarAndNavbarPage({ ContentComponent, setDashboardVisible, setProductVisible, setTransactionVisible, setQuery, fetchData }) {
   // States for controlling the modals
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showAddModalProduct, setshowAddModalProduct] = useState(false);
@@ -28,6 +29,9 @@ function SidebarAndNavbarPage({ ContentComponent, setDashboardVisible, setProduc
   const [btnType, setBtnType] = useState('');
 
   const [selectedRows, setSelectedRows] = useState(new Set());
+  const [selectedProductAddTransaction, setSelectedProductAddTransaction] = useState(new Set());
+
+  const [isBtnLoading, setIsBtnLoading] = useState(false);
 
   // useEffect(() => {
   //   console.log(selectedRows)
@@ -57,12 +61,15 @@ function SidebarAndNavbarPage({ ContentComponent, setDashboardVisible, setProduc
   const handleAddClose = () => {
     setshowAddModalProduct(false);
     setshowAddModalTransaction(false);
+
     setImagePreview(null); // Reset image preview on close
     setUploadButtonSize('btn-lg'); // Reset button size on close
 
     setAddProductName("")
     setAddProductPrice("")
     setAddProductDetail("")
+
+    setSelectedProductAddTransaction(new Set())
   };
 
   const handleFileChange = (event) => {
@@ -98,10 +105,11 @@ function SidebarAndNavbarPage({ ContentComponent, setDashboardVisible, setProduc
     setProductVisible(false);
     setTransactionVisible(true);
     // setQuery('transactions');
-    fetchData('transactions')
+    fetchData('customer/getcustomer')
     setNamePage('All Transaction')
     setShowPropertyNavBar(true);
     setSelectedRows(new Set());
+    setSelectedProductAddTransaction(new Set())
   }
 
   const handleAddProduct = async () => {
@@ -130,6 +138,63 @@ function SidebarAndNavbarPage({ ContentComponent, setDashboardVisible, setProduc
     }
 
   }
+
+  const handleAddTransaction = async () => {
+    let customer_result = null;
+    setIsBtnLoading(true)
+    try {
+      const img = imagePreview; // Assuming imagePreview is the image URL
+      const response = await fetch(img); // Fetch the image
+      const blob = await response.blob(); // Convert the response to a Blob
+
+      // Convert Blob to Base64
+      const base64String = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result.split(',')[1]); // Get Base64 string without the data URL prefix
+        reader.onerror = reject;
+        reader.readAsDataURL(blob); // Read the Blob as Data URL
+      });
+
+      const data = {
+        customer_img: base64String // Sending the Base64 string instead of the Blob
+      };
+
+      customer_result = await util.fetchPost('customer/addcustomer', data);
+    } catch (error) {
+      console.error('Error in handleAddTransaction:', error);
+    }
+
+    const transaction_data = {
+      customer_id: customer_result.detail['customer_id'],
+      product_list: Array.from(selectedProductAddTransaction).map(item => {
+        return {
+          product_id: item.product_id,
+          qty: item.quantity,
+        }
+      })
+    }
+
+    try {
+      const result = await util.fetchPost('transaction/addtransaction', transaction_data)
+      console.log(result)
+      if (result.code === 201) {
+        setShowNotify(true);
+        setMessage('customer_id ' + customer_result.detail['customer_id'] + ' added success')
+        setBtnType('success')
+        handleAddClose()
+        handleTransactionPage()
+      }
+      else {
+        setShowNotify(true);
+        setMessage('Failed to add transaction')
+        setBtnType('warning')
+      }
+      setIsBtnLoading(false)
+    }
+    catch (error) {
+      console.error('Error in handleAddTransaction:', error);
+    }
+  };
 
   return (
     <div className="grid-container">
@@ -179,9 +244,9 @@ function SidebarAndNavbarPage({ ContentComponent, setDashboardVisible, setProduc
         showDeleteModal={showDeleteModal}
         handleDeleteClose={handleDeleteClose}
         selectedItem={selectedRows}
-        col_name={namePage === 'All Product' ? 'product_id' : 'transaction_id'}
+        col_name={namePage === 'All Product' ? 'product_id' : 'customer_id'}
         handlePage={namePage === 'All Product' ? handleProductPage : handleTransactionPage}
-        path={namePage === 'All Product' ? 'product/deleteproduct' : 'transaction/deletetransaction'}
+        path={namePage === 'All Product' ? 'product/deleteproduct' : 'customer/deletecustomer'}
       />
 
       {/* Add Item Modal */}
@@ -208,8 +273,11 @@ function SidebarAndNavbarPage({ ContentComponent, setDashboardVisible, setProduc
             handleAddClose={handleAddClose}
             imagePreview={imagePreview}
             handleFileChange={handleFileChange}
-            BoxAddTransaction={BoxAddTransaction}
             uploadButtonSize={uploadButtonSize}
+            handleAddTransaction={handleAddTransaction}
+            selectedProductAddTransaction={selectedProductAddTransaction}
+            setSelectedProductAddTransaction={setSelectedProductAddTransaction}
+            isBtnLoading={isBtnLoading}
           />
         )
       }

@@ -4,7 +4,9 @@ import util from "../../util/util";
 
 const DeleteModal = ({ showDeleteModal, handleDeleteClose, selectedItem, col_name, handlePage, path }) => {
 
+    const [isBtnLoading, setIsBtnLoading] = useState(false);
     const handleConfirmDelete = async () => {
+        setIsBtnLoading(true);
         const itemsToDelete = Array.from(selectedItem);
 
         try {
@@ -16,7 +18,7 @@ const DeleteModal = ({ showDeleteModal, handleDeleteClose, selectedItem, col_nam
             }
             handleDeleteClose();
             handlePage(); // Fetch the data again after successful deletion
-
+            
         } catch (error) {
             console.error('Error during deletion:', error);
         }

@@ -46,7 +46,7 @@ function App() {
             <Table
               name={"Transaction"}
               data={data}
-              columns={["Transaction_id", "Gender", "Age", "Ethnicity"]}
+              columns={["Customer_id", "Sex", "Age", "Race"]}
               Box={BoxTransactions}
               activateCheckBox={true}
               isLoading={isLoading} />
@@ -56,7 +56,6 @@ function App() {
           setProductVisible={setProductVisible}
           setTransactionVisible={setTransactionsVisible}
           setQuery={setQuery}
-          BoxAddTransaction={<BoxAddTransaction />}
           fetchData={fetchData}
         />
       </div>
