@@ -3,14 +3,12 @@ import { BarChart } from '@mui/x-charts/BarChart';
 import { axisClasses } from '@mui/x-charts/ChartsAxis';
 
 import Loading from "../loading/Loading";
-
 import util from "../../util/util";
 
 const BoxProduct = ({ id }) => {
-    const queryData = `products/id?${id}`;
-    const queryImg = `products/image/id?${id}`;
-    const [data, setData] = useState([]);
-    const [filteredData, setFilteredData] = useState("gender");
+    const queryData = `transaction/getproducttransaction/${id}`;
+    const [data, setData] = useState(null);
+    const [filteredData, setFilteredData] = useState("sex");
     const [xAxis, setXAxis] = useState([]);
     const [group, setGroup] = useState([]);
     const [series, setSeries] = useState([]);
@@ -24,73 +22,37 @@ const BoxProduct = ({ id }) => {
         const fetchData = async () => {
             setIsLoading(true);
             const result = await util.fetchData(queryData);
-            console.log(result);
-            if (result.length > 0) {
-                const product = {
-                    id: result[0].product_id,
-                    name: result[0].product_name,
-                    price: result[0].price,
-                    detail: result[0].detail,
-                };
-                setProductData(product);
-                console.log(product);
-
-                const uniqueDates = [...new Set(result.map(item => item.date))];
-                const lastFiveDates = uniqueDates.sort((a, b) => new Date(b) - new Date(a)).slice(0, 5);
-                const dataset = result.filter(item => lastFiveDates.includes(item.date));
-                setData(dataset);
-                setIsLoading(false);
-                return
-            }
+            // console.log(result);
             setData(result);
+            setProductData(result["product"]);
+            const imgBlob = new Blob([result["product"]["product_img"]], { type: "image/jpeg" });  // or "image/png" based on your image type
+            const url = URL.createObjectURL(imgBlob);
+            setProductImg(url);
             setIsLoading(false);
         };
 
-        const fetchImg = async () => {
-            const result = await util.fetchImg(queryImg);
-            setProductImg(result);
-            console.log(result);
-        };
         fetchData();
-        fetchImg();
 
     }, [id]);
 
     useEffect(() => {
-        if (data.length === 0) return;
+        if (data !== null) {
+            // console.log(data["dates"]);
+            setXAxis(data["dates"]);
+            setGroup(data["group"][filteredData]);
+            setSeries(data["series"][filteredData]);
 
-        const groupedData = data.reduce((acc, item) => {
-            const date = item.date;
-            const groupData = item[filteredData];
-
-            if (!acc[date]) {
-                acc[date] = {};
-            }
-            acc[date][groupData] = (acc[date][groupData] || 0) + 1;
-
-            return acc;
-        }, {});
-        const dates = Object.keys(groupedData);
-        const groups = Array.from(new Set(data.map(item => item[filteredData])));
-
-        setXAxis(dates);
-        setGroup(groups);
-
-        const seriesData = groups.map(group =>
-            dates.map(date => groupedData[date][group] || 0)
-        );
-        setSeries(seriesData);
-
-        console.log(xAxis);
-        console.log(group);
-        console.log(series);
+            // console.log(xAxis);
+            // console.log(group);
+            // console.log(series);
+        }
 
     }, [data, filteredData]);
 
     const chartSetting = {
         yAxis: [
             {
-                label: 'quantity',
+                label: 'Quantity',
             },
         ],
         width: 500,
@@ -106,7 +68,7 @@ const BoxProduct = ({ id }) => {
         <div className="container-fluid">
             {isLoading ? (
                 <Loading />
-            ) : data.length === 0 ? (
+            ) : !data ? (
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     No data available
                 </div>
@@ -116,10 +78,10 @@ const BoxProduct = ({ id }) => {
                         <div className="btn-group mb-3" role="group" aria-label="Filter Options">
                             <button
                                 type="button"
-                                className={`btn btn-primary ${filteredData === 'gender' ? 'active' : ''}`}
-                                onClick={() => setFilteredData('gender')}
+                                className={`btn btn-primary ${filteredData === 'sex' ? 'active' : ''}`}
+                                onClick={() => setFilteredData('sex')}
                             >
-                                Gender
+                                Sex
                             </button>
                             <button
                                 type="button"
@@ -130,21 +92,21 @@ const BoxProduct = ({ id }) => {
                             </button>
                             <button
                                 type="button"
-                                className={`btn btn-primary ${filteredData === 'ethnicity' ? 'active' : ''}`}
-                                onClick={() => setFilteredData('ethnicity')}
+                                className={`btn btn-primary ${filteredData === 'race' ? 'active' : ''}`}
+                                onClick={() => setFilteredData('race')}
                             >
-                                Ethnicity
+                                Race
                             </button>
                         </div>
                         <div>
                             <BarChart
-                                xAxis={[{ scaleType: 'band', data: xAxis, label: 'date' }]}
+                                xAxis={[{ scaleType: 'band', data: xAxis, label: 'Date' }]}
                                 series={group.map((groupName, index) => ({
-                                    data: series[index],
+                                    data: series.map(dateSeries => dateSeries[index]),
                                     name: groupName,
                                     label: group[index]
                                 }))}
-                                slotProps={{ legend: { hidden: true } }}
+                                slotProps={{ legend: { hidden: false } }}
                                 {...chartSetting}
                             />
                         </div>
@@ -161,9 +123,10 @@ const BoxProduct = ({ id }) => {
                             <div className="card-body">
                                 <div className="text-start">
                                     <p className="card-text">
-                                        <strong>ID:</strong> {productData.id} <br />
+                                        <strong>ID:</strong> {productData.product_id} <br />
                                         <strong>Name:</strong> {productData.name} <br />
-                                        <strong>Price:</strong> ${productData.price}
+                                        <strong>Price:</strong> ${productData.price} <br />
+                                        <strong>Total quantity:</strong> {productData.total_qty}
                                     </p>
                                     <p className="card-text"><strong>Detail:</strong> {productData.detail}</p>
                                 </div>
