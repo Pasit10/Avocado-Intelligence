@@ -46,3 +46,16 @@ def deleteTransaction(transaction:schemas.TransactionCreate):
     except SQLAlchemyError as e:
         db.rollback()  # Rollback the transaction in case of error
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Error adding transaction") from e
+
+def getTransactionByID(customer_id:int):
+    transaction = db.query(Transaction).filter(Transaction.customer_id == customer_id)
+    return transaction.all()
+
+def getTransactionLast5DayByProductID(product_id: int):
+    transaction = (
+        db.query(Transaction)
+        .filter(Transaction.product_id == product_id)
+        .order_by(Transaction.transaction_date.desc())  # Sort by transaction_date in descending order
+        .limit(5)  # Limit to the last 5 transactions
+    )
+    return transaction.all()  # Return the list of transactions
