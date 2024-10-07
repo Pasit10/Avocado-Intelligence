@@ -57,5 +57,5 @@ def deleteCustomer(customer_id:int):
     if not customer:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail='customer not found')
 
-    repository.deleteCustomer(customer)
+    repository.deleteCustomer(customer_id)
     return status.HTTP_200_OK
