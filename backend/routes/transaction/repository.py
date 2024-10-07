@@ -39,13 +39,38 @@ def findTransactionById(customer_id: int, product_id: int):
     transaction = db.query(Transaction).filter(Transaction.customer_id == customer_id,Transaction.product_id == product_id).first()
     return transaction
 
-def deleteTransaction(transaction:schemas.TransactionCreate):
+def findTransactionByCustomerId(customer_id:int):
+    transaction = db.query(Transaction).filter(Transaction.customer_id == customer_id).all()
+    return transaction
+
+def findTransactionByProductId(product_id:int):
+    transaction = db.query(Transaction).filter(Transaction.product_id == product_id).all()
+    return transaction
+
+def deleteTransactionByCustomerId(customer_id:int):
     try:
-        db.delete(transaction)
+        db.query(Transaction).filter(Transaction.customer_id == customer_id).delete(synchronize_session=False)
         db.commit()
     except SQLAlchemyError as e:
         db.rollback()  # Rollback the transaction in case of error
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Error adding transaction") from e
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Error to deleting transaction") from e
+
+def deleteTransactionByProductId(product_id:int):
+    try:
+        db.query(Transaction).filter(Transaction.product_id == product_id).delete()
+        db.commit()
+    except SQLAlchemyError as e:
+        db.rollback()  # Rollback the transaction in case of error
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Error to deleting transaction") from e
+
+def deleteTransaction(customer_id:int, product_id:int):
+    try:
+        db.query(Transaction).filter(Transaction.customer_id == customer_id, Transaction.product_id == product_id).delete()
+        db.commit()
+    except SQLAlchemyError as e:
+        db.rollback()  # Rollback the transaction in case of error
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Error to deleting transaction") from e
+
 
 def getTransactionByID(customer_id:int):
     transaction = db.query(Transaction).filter(Transaction.customer_id == customer_id)

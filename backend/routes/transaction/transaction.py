@@ -59,17 +59,32 @@ def addTransaction(transaction_request:schemas.TransactionRequest):
     }
 
 @transaction.delete(path="/deletetransaction",status_code=status.HTTP_200_OK)
-def deleteTransacrion(customer_id: int, product_id: int):
-    if customer_id <= 0:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="customer_id less than zero")
-    elif product_id <= 0:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=f"product_id less than zero")
+def deleteTransacrion(customer_id, product_id):
+    if customer_id.lower() == 'all':
+        product_id = int(product_id)
+        if product_id <= 0:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=f"product_id less than zero")
 
-    transaction = repository.findTransactionById(customer_id,product_id)
-    if not transaction:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail=f"transaction not found")
+        transaction_list = repository.findTransactionByProductId(product_id)
+        if len(transaction_list) == 0:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail=f"transaction not found")
+        repository.deleteTransactionByProductId(product_id)
+    elif product_id.lower() == 'all':
+        customer_id = int(customer_id)
+        if customer_id <= 0:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="customer_id less than zero")
 
-    repository.deleteTransaction(transaction)
+        transaction_list = repository.findTransactionByCustomerId(customer_id)
+        if len(transaction_list) == 0:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail=f"transaction not found")
+
+        repository.deleteTransactionByCustomerId(customer_id)
+    else:
+        transaction = repository.findTransactionById(customer_id,product_id)
+        if not transaction:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail=f"transaction not found")
+
+        repository.deleteTransaction(customer_id,product_id)
     return status.HTTP_200_OK
 
 @transaction.get(path="/gettransaction/{customer_id}",status_code=status.HTTP_200_OK,response_model=schemas.TransactionResponseByID)
