@@ -62,5 +62,5 @@ def delete_product(product_id:int):
     if not product:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail='product not found')
 
-    repository.deleteProduct(product)
+    repository.deleteProduct(product_id)
     return status.HTTP_200_OK
