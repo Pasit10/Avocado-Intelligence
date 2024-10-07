@@ -46,4 +46,5 @@ def deleteCustomer(customer_id:int):
         db.query(Customer).filter(Customer.customer_id == customer_id).delete()
         db.commit()
     except SQLAlchemyError as e:
+        db.rollback()
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Error to delete product") from e
