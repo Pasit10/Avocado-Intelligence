@@ -7,7 +7,7 @@ from constant import  constants
 DATABASE_URL = f"mysql+pymysql://{constants.USERNAME}:{constants.PASSWORD}@localhost:{constants.DATABASE_PORT}/{constants.DATABASE_NAME}"
 
 # Create the SQLAlchemy engine
-engine = create_engine(DATABASE_URL,echo=True)
+engine = create_engine(DATABASE_URL,echo=False)
 
 # Create a configured "Session" class
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

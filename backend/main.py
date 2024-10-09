@@ -3,10 +3,11 @@ from starlette.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from config import database
+from routes.health import health
 from routes.customer import customer
 from routes.product import product
 from routes.transaction import transaction
-from routes.health import health
+from routes.dashboard import dashboard
 
 # if terminate program -> close database
 @asynccontextmanager
@@ -30,6 +31,7 @@ api_route.include_router(health.health, prefix="/health", tags=[health])
 api_route.include_router(customer.customer, prefix="/customer", tags=[customer])
 api_route.include_router(product.product, prefix="/product", tags=[product])
 api_route.include_router(transaction.transaction, prefix="/transaction", tags=[transaction])
+api_route.include_router(dashboard.dashboard, prefix="/dashboard", tags=[dashboard])
 
 app.include_router(api_route)
 
