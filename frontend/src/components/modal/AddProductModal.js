@@ -1,7 +1,21 @@
 import { useState } from "react";
 import { Button } from 'react-bootstrap';
+import Loading from "../loading/Loading";
 
-const AddProductModal = ({ handleAddClose, imagePreview, handleFileChange, setAddProductName, setAddProductPrice, setAddProductDetail, handleAddProduct, uploadButtonSize, addProductName, addProductPrice, addProductDetail }) => {
+const AddProductModal = ({
+    handleAddClose,
+    imagePreview,
+    handleFileChange,
+    setAddProductName,
+    setAddProductPrice,
+    setAddProductDetail,
+    handleAddProduct,
+    uploadButtonSize,
+    addProductName,
+    addProductPrice,
+    addProductDetail,
+    isBtnLoading,
+}) => {
     return (
         <div className="modal fade show" style={{ display: 'block', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
             <div className="modal-dialog modal-dialog-centered modal-lg">
@@ -70,8 +84,8 @@ const AddProductModal = ({ handleAddClose, imagePreview, handleFileChange, setAd
                         <Button variant="secondary" onClick={handleAddClose}>
                             Cancel
                         </Button>
-                        <Button variant="primary" onClick={handleAddProduct}>
-                            Add
+                        <Button disabled={isBtnLoading} variant="primary" onClick={handleAddProduct}>
+                            {isBtnLoading ? (<Loading n={2} />) : (<div>Add</div>)}
                         </Button>
                     </div>
                 </div>
