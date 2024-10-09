@@ -36,6 +36,7 @@ CREATE TABLE transaction (
 USE Ethnicity_Detection_Model;
 DELETE FROM transaction;
 DELETE FROM customer;
+DELETE FROM product;
 
 INSERT INTO product (product_id, name, price, detail, product_img) VALUES
 (1, 'Product A', 100, 'Details for Product A', NULL),
@@ -48,3 +49,47 @@ INSERT INTO product (product_id, name, price, detail, product_img) VALUES
 (8, 'Product H', 450, 'Details for Product H', NULL),
 (9, 'Product I', 500, 'Details for Product I', NULL),
 (10, 'Product J', 550, 'Details for Product J', NULL);
+
+SELECT * FROM transaction
+INNER JOIN customer ON transaction.customer_id = customer.customer_id
+INNER JOIN product ON transaction.product_id = product.product_id
+ORDER BY transaction.customer_id, transaction_date;
+
+SELECT sex,count(sex) FROM customer
+GROUP BY sex;
+
+INSERT INTO transaction (customer_id, product_id, qty, transaction_date) VALUES
+(1, 10, 2, '2024-10-08'),
+(1, 9, 4, '2024-10-07'),
+(1, 8, 5, '2024-10-06'),
+(1, 7, 6, '2024-10-05'),
+(1, 6, 7, '2024-10-04');
+
+
+-- SELECT * FROM transaction
+-- INNER JOIN customer on transaction.customer_id == customer_id
+-- WHERE
+
+UPDATE transaction
+SET transaction_date = "2024-10-10"
+WHERE customer_id > 1;
+
+SELECT sex as sex,count(sex) FROM transaction
+INNER JOIN customer ON transaction.customer_id = customer.customer_id
+WHERE product_id = 2
+GROUP BY sex;
+
+SELECT * FROM customer
+INNER JOIN transaction ON customer.customer_id = transaction.customer_id
+WHERE transaction_date = '2024-10-8';
+--GROUP BY sex;--, transaction_date;
+
+SELECT customer_id FROM transaction WHERE product_id = 2
+
+SELECT sex As category, COUNT(*) AS count
+FROM customer
+GROUP BY sex
+UNION ALL
+SELECT race AS category, COUNT(*) AS count
+FROM customer
+GROUP BY race;

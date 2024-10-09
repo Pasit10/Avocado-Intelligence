@@ -3,4 +3,5 @@ sqlalchemy
 pymysql
 pydantic
 uvicorn
+python-dateutil
 tensorflow==2.16.1

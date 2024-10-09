@@ -1,5 +1,7 @@
 from fastapi import HTTPException, status
+from sqlalchemy import func
 from sqlalchemy.exc import SQLAlchemyError
+from datetime import datetime,timedelta
 
 from . import schemas
 from config.database import db
@@ -77,10 +79,13 @@ def getTransactionByID(customer_id:int):
     return transaction.all()
 
 def getTransactionLast5DayByProductID(product_id: int):
+    current_date = datetime.today()
+    start_of_week = current_date - timedelta(days=7)
     transaction = (
         db.query(Transaction)
         .filter(Transaction.product_id == product_id)
-        .order_by(Transaction.transaction_date.desc())  # Sort by transaction_date in descending order
-        .limit(5)  # Limit to the last 5 transactions
+        .filter(Transaction.transaction_date.between(start_of_week,current_date))
+        .order_by(Transaction.transaction_date.desc())
+        .all()
     )
-    return transaction.all()  # Return the list of transactions
+    return transaction #, count_sex, count_age, count_race

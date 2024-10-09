@@ -95,32 +95,33 @@ def getTransactionByID(customer_id:int):
     transactions = repository.getTransactionByID(customer_id)
     if not transactions:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail=f"transaction not found")
-    
+
     customer = repository.findCustomerByID(customer_id)
     if not customer:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail=f"customer not found")
-    
+
     response_transaction = {
         "customer":customer,
         "product_list":[],
         "transaction_date": transactions[0].transaction_date
     }
-    
+
     for transaction in transactions:
         product = repository.findProductByID(transaction.product_id)
         if not product:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail=f"customer not found")
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail=f"product not found")
         product_res = {
             "product_id":product.product_id,
             "name":product.name,
             "price":product.price,
             "qty":transaction.qty
         }
-        
+
         response_transaction["product_list"].append(product_res)
-    
+
     return response_transaction
 
+# deshbord
 @transaction.get(path="/getproducttransaction/{product_id}", status_code=status.HTTP_200_OK, response_model=schemas.TransactionProduct)
 def get_transaction(product_id: int):
     if product_id < 0:

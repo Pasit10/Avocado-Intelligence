@@ -59,14 +59,14 @@ class group(BaseModel):
     sex: List[str]
     age: List[str]
     race: List[str]
-    
+
 class series(BaseModel):
     sex: List[List[int]]
     age: List[List[int]]
     race: List[List[int]]
+
 class TransactionProduct(BaseModel):
     product: ProductTransaction
     dates: List[str]
     group: group
     series: series
-    
