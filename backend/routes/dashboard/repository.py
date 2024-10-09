@@ -12,7 +12,7 @@ from model.transaction import Transaction
 def getDataCustomerData(datetype:str):
     current_date = datetime.today()
     current_date_str = current_date.strftime("%y-%m-%d")
-    print(current_date)
+
     if datetype == "day":
         sex_data = (
             db.query(Transaction.transaction_date, Customer.sex, func.count(func.distinct(Customer.customer_id)))
@@ -43,7 +43,7 @@ def getDataCustomerData(datetype:str):
     one_mouth_ago = (current_date - relativedelta(months=1)).strftime("%y-%m-%d")
 
     start_date = one_week_ago if datetype == "week" else one_mouth_ago
-    print(start_date)
+
     sex_data = (
         db.query(Transaction.transaction_date, Customer.sex, func.count(func.distinct(Customer.customer_id)))
         .join(Transaction, Transaction.customer_id == Customer.customer_id)
