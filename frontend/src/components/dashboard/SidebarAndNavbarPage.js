@@ -113,6 +113,7 @@ function SidebarAndNavbarPage({ ContentComponent, setDashboardVisible, setProduc
   }
 
   const handleAddProduct = async () => {
+    setIsBtnLoading(true);
     const data = {
       name: addProductName,
       price: addProductPrice,
@@ -134,9 +135,9 @@ function SidebarAndNavbarPage({ ContentComponent, setDashboardVisible, setProduc
       setShowNotify(true);
     } catch (error) {
       console.error('Fetch Post Error:', error);
-      throw error;
+      // throw error;
     }
-
+    setIsBtnLoading(false);
   }
 
   const handleAddTransaction = async () => {
@@ -264,6 +265,7 @@ function SidebarAndNavbarPage({ ContentComponent, setDashboardVisible, setProduc
             addProductDetail={addProductDetail}
             handleAddProduct={handleAddProduct}
             uploadButtonSize={uploadButtonSize}
+            isBtnLoading={isBtnLoading}
           />
         )
       }
