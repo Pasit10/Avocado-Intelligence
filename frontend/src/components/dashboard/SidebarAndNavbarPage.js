@@ -143,58 +143,63 @@ function SidebarAndNavbarPage({ ContentComponent, setDashboardVisible, setProduc
   const handleAddTransaction = async () => {
     let customer_result = null;
     setIsBtnLoading(true)
-    try {
-      const img = imagePreview; // Assuming imagePreview is the image URL
-      const response = await fetch(img); // Fetch the image
-      const blob = await response.blob(); // Convert the response to a Blob
+    if (imagePreview !== null) {
+      if (selectedProductAddTransaction.size > 0) {
 
-      // Convert Blob to Base64
-      const base64String = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result.split(',')[1]); // Get Base64 string without the data URL prefix
-        reader.onerror = reject;
-        reader.readAsDataURL(blob); // Read the Blob as Data URL
-      });
+        try {
+          const base64String = imagePreview.split(",")[1]; // Assuming imagePreview is the image URL
 
-      const data = {
-        customer_img: base64String // Sending the Base64 string instead of the Blob
-      };
+          const data = {
+            customer_img: base64String // Sending the Base64 string instead of the Blob
+          };
 
-      customer_result = await util.fetchPost('customer/addcustomer', data);
-    } catch (error) {
-      console.error('Error in handleAddTransaction:', error);
-    }
-
-    const transaction_data = {
-      customer_id: customer_result.detail['customer_id'],
-      product_list: Array.from(selectedProductAddTransaction).map(item => {
-        return {
-          product_id: item.product_id,
-          qty: item.quantity,
+          customer_result = await util.fetchPost('customer/addcustomer', data);
+        } catch (error) {
+          console.error('Error in handleAddTransaction:', error);
         }
-      })
-    }
 
-    try {
-      const result = await util.fetchPost('transaction/addtransaction', transaction_data)
-      console.log(result)
-      if (result.code === 201) {
-        setShowNotify(true);
-        setMessage('customer_id ' + customer_result.detail['customer_id'] + ' added success')
-        setBtnType('success')
-        handleAddClose()
-        handleTransactionPage()
+        const transaction_data = {
+          customer_id: customer_result.detail['customer_id'],
+          product_list: Array.from(selectedProductAddTransaction).map(item => {
+            return {
+              product_id: item.product_id,
+              qty: item.quantity,
+            }
+          })
+        }
+
+        try {
+          const result = await util.fetchPost('transaction/addtransaction', transaction_data)
+          console.log(result)
+          if (result.code === 201) {
+            setShowNotify(true);
+            setMessage('customer_id ' + customer_result.detail['customer_id'] + ' added success')
+            setBtnType('success')
+            handleAddClose()
+            handleTransactionPage()
+          }
+          else {
+            setShowNotify(true);
+            setMessage('Failed to add transaction')
+            setBtnType('warning')
+          }
+        }
+        catch (error) {
+          console.error('Error in handleAddTransaction:', error);
+        }
       }
       else {
         setShowNotify(true);
-        setMessage('Failed to add transaction')
-        setBtnType('warning')
+        setMessage("Please select product at least 1 product");
+        setBtnType('warning');
       }
-      setIsBtnLoading(false)
     }
-    catch (error) {
-      console.error('Error in handleAddTransaction:', error);
+    else {
+      setShowNotify(true);
+      setMessage("Please insert image");
+      setBtnType('warning');
     }
+    setIsBtnLoading(false)
   };
 
   return (
@@ -274,6 +279,7 @@ function SidebarAndNavbarPage({ ContentComponent, setDashboardVisible, setProduc
           <AddTransactionModal
             handleAddClose={handleAddClose}
             imagePreview={imagePreview}
+            setImagePreview={setImagePreview}
             handleFileChange={handleFileChange}
             uploadButtonSize={uploadButtonSize}
             handleAddTransaction={handleAddTransaction}

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Table from "../table/Table";
 import util from "../../util/util";
+import BoxProduct from "./BoxProduct";
 
 const BoxAddTransaction = ({ selectedRows, setSelectedRows , listProduct, setListProduct}) => {
     const [data, setData] = useState([]);
@@ -24,7 +25,7 @@ const BoxAddTransaction = ({ selectedRows, setSelectedRows , listProduct, setLis
 
     useEffect(() => {
         setListProduct(Array.from(selectedRows))
-        console.log(selectedRows);
+        // console.log(selectedRows);
     }, [selectedRows]);
 
     const toggleSearch = () => {
@@ -66,6 +67,7 @@ const BoxAddTransaction = ({ selectedRows, setSelectedRows , listProduct, setLis
                         selectedRows={selectedRows}
                         setSelectedRows={setSelectedRows}
                         isShowList={false}
+                        Box={BoxProduct}
                     />
                 ) : (
                     <Table
@@ -79,6 +81,7 @@ const BoxAddTransaction = ({ selectedRows, setSelectedRows , listProduct, setLis
                         selectedRows={selectedRows}
                         setSelectedRows={setSelectedRows}
                         isShowList={true}
+                        Box={BoxProduct}
                     />
                 )}
             </div>

@@ -25,7 +25,17 @@ const BoxProduct = ({ id }) => {
             // console.log(result);
             setData(result);
             setProductData(result["product"]);
-            const imgBlob = new Blob([result["product"]["product_img"]], { type: "image/jpeg" });  // or "image/png" based on your image type
+            const base64String = result["product"]["product_img"];
+            const byteCharacters = atob(base64String); // Decode base64
+            const byteNumbers = new Array(byteCharacters.length);
+
+            // Convert the decoded string to an array of bytes
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+
+            const byteArray = new Uint8Array(byteNumbers);
+            const imgBlob = new Blob([byteArray], { type: "image/png" });  // Adjust MIME type if necessary
             const url = URL.createObjectURL(imgBlob);
             setProductImg(url);
             setIsLoading(false);
@@ -120,9 +130,11 @@ const BoxProduct = ({ id }) => {
                                     <Loading />
                                 )}
                             </div>
-                            <div className="card-body">
+                            <div className="card-body" style={{
+                                padding: "10px",
+                            }}>
                                 <div className="text-start">
-                                    <p className="card-text">
+                                    <p className="card-text" >
                                         <strong>ID:</strong> {productData.product_id} <br />
                                         <strong>Name:</strong> {productData.name} <br />
                                         <strong>Price:</strong> ${productData.price} <br />

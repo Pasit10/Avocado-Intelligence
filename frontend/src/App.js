@@ -26,10 +26,6 @@ function App() {
     setIsLoading(false);
   }
 
-  useEffect(() => {
-    fetchData(query);
-  }, [query])
-
   return (
     <div className="App">
       <div>
