@@ -16,6 +16,21 @@ def getCustomerData(datetype: str):
     sex_data, age_data, race_data = repository.getDataCustomerData(datetype)
     response_dict = {}
 
+    if not sex_data or not age_data or not race_data:
+        response = {
+            "transaction_date": datetime.today().strftime('%Y-%m-%d'),
+            "sex": {},
+            "age": {},
+            "race": {},
+        }
+        return JSONResponse(
+            status_code=status.HTTP_404_NOT_FOUND,
+            content={
+                "detail": f"No data available for this {datetype}",
+                "data": response
+            }
+        )
+
     for transaction_date, sex, count in sex_data:
         date_str = transaction_date.strftime('%Y-%m-%d')
         if date_str not in response_dict:

@@ -71,7 +71,7 @@ INSERT INTO transaction (customer_id, product_id, qty, transaction_date) VALUES
 -- WHERE
 
 UPDATE transaction
-SET transaction_date = "2024-10-10"
+SET transaction_date = "2024-10-9"
 WHERE customer_id > 1;
 
 SELECT sex as sex,count(sex) FROM transaction
