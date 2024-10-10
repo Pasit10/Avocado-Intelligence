@@ -134,8 +134,6 @@ def get_transaction(product_id: int):
 
     # Fetch transactions for the product
     transactions = repository.getTransactionLast5DayByProductID(product_id)
-    if not transactions:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Transactions not found")
 
     total_qty = 0
     dates = []

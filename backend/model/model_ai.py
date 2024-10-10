@@ -47,4 +47,8 @@ def load_model_race():
     except FileNotFoundError:
         print("[Model]: cannot download model or wights race")
         return
+    except AttributeError as e:
+        print(f"[Error]: Constants not properly defined: {e}")
+    except Exception as e:
+        print(f"[Error]: An unexpected error occurred: {e}")
     return model_race
