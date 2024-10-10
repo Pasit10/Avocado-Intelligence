@@ -1,6 +1,6 @@
 from fastapi import HTTPException, status
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy import func
+from sqlalchemy import func, case
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
@@ -9,7 +9,7 @@ from model.customer import Customer
 from model.product import Product
 from model.transaction import Transaction
 
-def getDataCustomerData(datetype:str):
+def getCustomerData(datetype:str):
     current_date = datetime.today()
     current_date_str = current_date.strftime("%y-%m-%d")
 
@@ -68,3 +68,34 @@ def getDataCustomerData(datetype:str):
         .all()
     )
     return sex_data, age_data, race_data
+
+def getCustomerDataForSatatistic():
+    total_customer = db.query(func.count(Customer.customer_id)).scalar()
+    sex_data = (
+        db.query(Customer.sex, func.count(Customer.sex))
+        .group_by(Customer.sex)
+        .all()
+    )
+    age_data = (
+        db.query(
+            case(
+                (Customer.age < 18, 'Under 18'),
+                (Customer.age.between(18, 25), '18-25'),
+                (Customer.age.between(26, 35), '26-35'),
+                (Customer.age.between(36, 45), '36-45'),
+                (Customer.age.between(46, 55), '46-55'),
+                (Customer.age.between(56, 65), '56-65'),
+                (Customer.age > 65, 'Over 65'),
+                else_='Unknown'
+                ).label("age_group"),
+                func.count(Customer.customer_id).label("count")
+        )
+        .group_by("age_group")
+        .all()
+    )
+    race_data = (
+        db.query(Customer.race, func.count(Customer.race))
+        .group_by(Customer.race)
+        .all()
+    )
+    return total_customer, sex_data, age_data, race_data

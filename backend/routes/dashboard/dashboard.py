@@ -13,7 +13,7 @@ def getCustomerData(datetype: str):
     if datetype not in ["day", "week", "month"]:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid datatype value. Allowed values: day, week, month")
 
-    sex_data, age_data, race_data = repository.getDataCustomerData(datetype)
+    sex_data, age_data, race_data = repository.getCustomerData(datetype)
     response_dict = {}
 
     if not sex_data or not age_data or not race_data:
@@ -73,3 +73,33 @@ def getCustomerData(datetype: str):
     response_list = list(response_dict.values())
 
     return JSONResponse(content=response_list)
+
+@dashboard.get(path="/getcustomerstatistic",status_code=status.HTTP_200_OK)
+def getCustomerStatistic():
+    total_customer, sex_data, age_data, race_data = repository.getCustomerDataForSatatistic()
+
+    def calculate_percentage(count, total):
+        return f"{(count / total) * 100:.0f}%" if total != 0 else "0%"
+
+    response = {
+        "sex": {
+            "male": calculate_percentage(next((count for group, count in sex_data if group == "male"), 0), total_customer),
+            "female": calculate_percentage(next((count for group, count in sex_data if group == "female"), 0), total_customer)
+        },
+        "age": {
+            "under 18": calculate_percentage(next((count for group, count in age_data if group == "Under 18"), 0), total_customer),
+            "18 - 25": calculate_percentage(next((count for group, count in age_data if group == "18-25"), 0), total_customer),
+            "26 - 35": calculate_percentage(next((count for group, count in age_data if group == "26-35"), 0), total_customer),
+            "46 - 55": calculate_percentage(next((count for group, count in age_data if group == "46-55"), 0), total_customer),
+            "56 - 65": calculate_percentage(next((count for group, count in age_data if group == "56-65"), 0), total_customer),
+            "over 65": calculate_percentage(next((count for group, count in age_data if group == "Over 65"), 0), total_customer)
+        },
+        "race": {
+            "White": calculate_percentage(next((count for race, count in race_data if race == "White"), 0), total_customer),
+            "Black": calculate_percentage(next((count for race, count in race_data if race == "Black"), 0), total_customer),
+            "Asian": calculate_percentage(next((count for race, count in race_data if race == "Asian"), 0), total_customer),
+            "Indian": calculate_percentage(next((count for race, count in race_data if race == "Indian"), 0), total_customer),
+            "Others": calculate_percentage(next((count for race, count in race_data if race == "Others"), 0), total_customer)
+        }
+    }
+    return response
