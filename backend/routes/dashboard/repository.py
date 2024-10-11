@@ -99,3 +99,37 @@ def getCustomerDataForSatatistic():
         .all()
     )
     return total_customer, sex_data, age_data, race_data
+
+def getTopProduct(datetype:str, limit:int):
+    current_date = datetime.today()
+    current_date_str = current_date.strftime("%y-%m-%d")
+
+    if datetype == "day":
+        product_data = (
+            db.query(Product.name, func.sum(Transaction.qty))
+            .join(Transaction, Transaction.product_id == Product.product_id)
+            .filter(Transaction.transaction_date == current_date_str)
+            .group_by(Product.product_id)
+            .limit(limit)
+        )
+        return product_data
+
+    one_week_ago = (current_date - relativedelta(days=6)).strftime("%y-%m-%d")
+    one_mouth_ago = (current_date - relativedelta(months=1)).strftime("%y-%m-%d")
+
+    start_date = one_week_ago if datetype == "week" else one_mouth_ago
+
+    product_data = (
+        db.query(Product.name, func.count(Transaction.qty))
+        .join(Transaction, Transaction.product_id == Product.product_id)
+        .filter(Transaction.transaction_date.between(start_date,current_date_str))
+        .group_by(Product.product_id)
+        .limit(limit)
+    )
+    return product_data
+
+def getBestSellerProduct():
+    product = (
+        db.query(Product)
+        .join()
+    )

@@ -93,3 +93,11 @@ UNION ALL
 SELECT race AS category, COUNT(*) AS count
 FROM customer
 GROUP BY race;
+
+SELECT product.name, SUM(transaction.qty)
+FROM product INNER JOIN transaction ON product.product_id = transaction.product_id
+GROUP BY product.product_id
+
+SELECT * FROM product
+INNER JOIN transaction ON transaction.product_id = customer.product_id
+ORDER BY 

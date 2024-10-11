@@ -74,32 +74,36 @@ def getCustomerData(datetype: str):
 
     return JSONResponse(content=response_list)
 
+def __calculate_percentage(count, total):
+    return f"{(count / total) * 100:.0f}%" if total != 0 else "0%"
+
 @dashboard.get(path="/getcustomerstatistic",status_code=status.HTTP_200_OK)
 def getCustomerStatistic():
     total_customer, sex_data, age_data, race_data = repository.getCustomerDataForSatatistic()
 
-    def calculate_percentage(count, total):
-        return f"{(count / total) * 100:.0f}%" if total != 0 else "0%"
-
     response = {
         "sex": {
-            "male": calculate_percentage(next((count for group, count in sex_data if group == "male"), 0), total_customer),
-            "female": calculate_percentage(next((count for group, count in sex_data if group == "female"), 0), total_customer)
+            "male": __calculate_percentage(next((count for group, count in sex_data if group == "male"), 0), total_customer),
+            "female": __calculate_percentage(next((count for group, count in sex_data if group == "female"), 0), total_customer)
         },
         "age": {
-            "under 18": calculate_percentage(next((count for group, count in age_data if group == "Under 18"), 0), total_customer),
-            "18 - 25": calculate_percentage(next((count for group, count in age_data if group == "18-25"), 0), total_customer),
-            "26 - 35": calculate_percentage(next((count for group, count in age_data if group == "26-35"), 0), total_customer),
-            "46 - 55": calculate_percentage(next((count for group, count in age_data if group == "46-55"), 0), total_customer),
-            "56 - 65": calculate_percentage(next((count for group, count in age_data if group == "56-65"), 0), total_customer),
-            "over 65": calculate_percentage(next((count for group, count in age_data if group == "Over 65"), 0), total_customer)
+            "under 18": __calculate_percentage(next((count for group, count in age_data if group == "Under 18"), 0), total_customer),
+            "18 - 25": __calculate_percentage(next((count for group, count in age_data if group == "18-25"), 0), total_customer),
+            "26 - 35": __calculate_percentage(next((count for group, count in age_data if group == "26-35"), 0), total_customer),
+            "46 - 55": __calculate_percentage(next((count for group, count in age_data if group == "46-55"), 0), total_customer),
+            "56 - 65": __calculate_percentage(next((count for group, count in age_data if group == "56-65"), 0), total_customer),
+            "over 65": __calculate_percentage(next((count for group, count in age_data if group == "Over 65"), 0), total_customer)
         },
         "race": {
-            "White": calculate_percentage(next((count for race, count in race_data if race == "White"), 0), total_customer),
-            "Black": calculate_percentage(next((count for race, count in race_data if race == "Black"), 0), total_customer),
-            "Asian": calculate_percentage(next((count for race, count in race_data if race == "Asian"), 0), total_customer),
-            "Indian": calculate_percentage(next((count for race, count in race_data if race == "Indian"), 0), total_customer),
-            "Others": calculate_percentage(next((count for race, count in race_data if race == "Others"), 0), total_customer)
+            "White": __calculate_percentage(next((count for race, count in race_data if race == "White"), 0), total_customer),
+            "Black": __calculate_percentage(next((count for race, count in race_data if race == "Black"), 0), total_customer),
+            "Asian": __calculate_percentage(next((count for race, count in race_data if race == "Asian"), 0), total_customer),
+            "Indian": __calculate_percentage(next((count for race, count in race_data if race == "Indian"), 0), total_customer),
+            "Others": __calculate_percentage(next((count for race, count in race_data if race == "Others"), 0), total_customer)
         }
     }
     return response
+
+@dashboard.get(path="/getBestSellerProduct",status_code=status.HTTP_200_OK)
+def getBestSellerProduct(datetype:str,limit=10):
+    pass
