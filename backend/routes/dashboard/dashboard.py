@@ -104,6 +104,35 @@ def getCustomerStatistic():
     }
     return response
 
-@dashboard.get(path="/getBestSellerProduct",status_code=status.HTTP_200_OK)
-def getBestSellerProduct(datetype:str,limit=10):
-    pass
+@dashboard.get(path="/gettopproduct",status_code=status.HTTP_200_OK)
+def getTopProduct(datetype:str, limit:int):
+    if datetype not in ["day", "week", "month"]:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid datatype value. Allowed values: day, week, month")
+
+    if not isinstance(limit, int):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid datatype value. Allowed only integer")
+
+    product_data = repository.getTopProduct(datetype,limit)
+
+    response = []
+    for product in product_data:
+        product_dict = {
+            "name": product.name,
+            "total_qty": product.total_qty
+        }
+        response.append(product_dict)
+
+    return response
+
+@dashboard.get(path="/getbestsellerproduct",status_code=status.HTTP_200_OK)
+def getBestSellerProduct():
+    product = repository.getBestSellerProduct()
+    if product:
+        return {
+            "product_id": product.Product.product_id,
+            "name": product.Product.name,
+            "description": product.Product.detail,  # Assuming you have a description field
+            "price": product.Product.price,  # Assuming you have a price field
+            "total_qty": product.total_qty
+        }
+    return {"message": "No product found"}

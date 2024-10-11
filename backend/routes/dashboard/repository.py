@@ -120,16 +120,21 @@ def getTopProduct(datetype:str, limit:int):
     start_date = one_week_ago if datetype == "week" else one_mouth_ago
 
     product_data = (
-        db.query(Product.name, func.count(Transaction.qty))
+        db.query(Product.name, func.sum(Transaction.qty).label("total_qty"))
         .join(Transaction, Transaction.product_id == Product.product_id)
-        .filter(Transaction.transaction_date.between(start_date,current_date_str))
+        .filter(Transaction.transaction_date.between(start_date, current_date_str))
         .group_by(Product.product_id)
+        .order_by(func.sum(Transaction.qty).desc())  # Corrected `.desc()`
         .limit(limit)
     )
     return product_data
 
 def getBestSellerProduct():
-    product = (
-        db.query(Product)
-        .join()
+    result = (
+        db.query(Product, func.sum(Transaction.qty).label("total_qty"))
+        .join(Transaction, Product.product_id == Transaction.product_id)
+        .group_by(Product.product_id)
+        .order_by(func.sum(Transaction.qty).desc())
+        .first()
     )
+    return result

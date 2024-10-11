@@ -1,4 +1,5 @@
 from fastapi import HTTPException, status
+from sqlalchemy import or_
 from sqlalchemy.exc import SQLAlchemyError
 
 from . import schemas
@@ -12,6 +13,17 @@ def getAllProduct():
 def getProductByID(product_id:int):
     product = db.query(Product).filter(Product.product_id == product_id).first()
     return product
+
+def getSearchProduct(query:str):
+    search_query = f"%{query}%"
+    product = db.query(Product).filter(
+                or_(
+                    Product.product_id.like(search_query),
+                    Product.name.like(search_query)
+                )
+            ).all()
+    return product
+
 
 def __getNextProductID():
     product = db.query(Product).order_by(Product.product_id.desc()).first()
@@ -46,7 +58,6 @@ def findProductForUpdateByID(product_id:int):
 
 def updateProduct(product_id:int, update_request:schemas.ProductUpdate):
     product = findProductForUpdateByID(product_id)
-
 
     product.name = update_request.name
     product.detail = update_request.detail
