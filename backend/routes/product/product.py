@@ -26,7 +26,7 @@ def get_product_byID(product_id:int):
 @product.post(path="/addproduct",status_code=status.HTTP_201_CREATED)
 def add_product(request_product: schemas.ProductCreate):
     #check request
-    if request_product.name == '':
+    if request_product.name == "":
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail='name is empty')
     elif request_product.price <= 0:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail='price less than zero')
