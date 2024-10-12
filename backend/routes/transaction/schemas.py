@@ -1,5 +1,5 @@
 from pydantic import BaseModel, conint
-from typing import List, Optional
+from typing import List, Optional, Dict
 from datetime import date
 
 class productItem(BaseModel):
@@ -55,18 +55,12 @@ class ProductTransaction(BaseModel):
     detail: str
     total_qty: int
 
-class group(BaseModel):
-    sex: List[str]
-    age: List[str]
-    race: List[str]
-
-class series(BaseModel):
-    sex: List[List[int]]
-    age: List[List[int]]
-    race: List[List[int]]
+class TransactionDataSchema(BaseModel):
+    transaction_date: date
+    sex: Dict[str, int]  # A dictionary where keys are 'female', 'male' and values are the counts
+    age: Dict[str, int]  # A dictionary where keys are age groups and values are the counts
+    race: Dict[str, int]  # A dictionary where keys are race categories (like 'Black', 'White') and values are counts
 
 class TransactionProduct(BaseModel):
     product: ProductTransaction
-    dates: List[str]
-    group: group
-    series: series
+    transaction_data: List[TransactionDataSchema]

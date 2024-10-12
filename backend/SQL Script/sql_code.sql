@@ -1,3 +1,5 @@
+CREATE DATABASE Ethnicity_Detection_Model;
+
 USE Ethnicity_Detection_Model;
 
 DROP TABLE transaction;

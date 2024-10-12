@@ -1,5 +1,5 @@
 from fastapi import HTTPException, status
-from sqlalchemy import func
+from sqlalchemy import func, case
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime,timedelta
 
@@ -78,14 +78,50 @@ def getTransactionByID(customer_id:int):
     transaction = db.query(Transaction).filter(Transaction.customer_id == customer_id)
     return transaction.all()
 
-def getTransactionLast5DayByProductID(product_id: int):
+def getTransactionLast7DayByProductID(product_id: int):
     current_date = datetime.today()
     start_of_week = current_date - timedelta(days=7)
-    transaction = (
-        db.query(Transaction)
+    total_qty = (
+        db.query(func.sum(Transaction.qty).label("total_qty"))
         .filter(Transaction.product_id == product_id)
         .filter(Transaction.transaction_date.between(start_of_week,current_date))
         .order_by(Transaction.transaction_date.desc())
         .all()
     )
-    return transaction #, count_sex, count_age, count_race
+
+    sex_data = (
+        db.query(Transaction.transaction_date, Customer.sex, func.count(func.distinct(Customer.customer_id)))
+        .join(Transaction, Transaction.customer_id == Customer.customer_id)
+        .filter(Transaction.product_id == product_id)
+        .filter(Transaction.transaction_date.between(start_of_week,current_date))
+        .group_by(Customer.sex, Transaction.transaction_date)
+        .order_by(Transaction.transaction_date.desc())
+    )
+
+    age_data = (
+        db.query(Transaction.transaction_date,case(
+            (Customer.age < 18, 'Under 18'),
+            (Customer.age.between(18, 25), '18-25'),
+            (Customer.age.between(26, 35), '26-35'),
+            (Customer.age.between(36, 45), '36-45'),
+            (Customer.age.between(46, 55), '46-55'),
+            (Customer.age.between(56, 65), '56-65'),
+            (Customer.age > 65, 'Over 65'),
+            else_='Unknown'
+        ).label("age_group"),func.count(Customer.customer_id).label("count"))
+        .join(Transaction, Transaction.customer_id == Customer.customer_id)
+        .filter(Transaction.product_id == product_id)
+        .filter(Transaction.transaction_date.between(start_of_week,current_date))
+        .group_by("age_group",Transaction.transaction_date)
+        .order_by(Transaction.transaction_date.desc())
+    )
+
+    race_data = (
+        db.query(Transaction.transaction_date, Customer.race, func.count(func.distinct(Customer.customer_id)))
+        .join(Transaction, Transaction.customer_id == Customer.customer_id)
+        .filter(Transaction.product_id == product_id)
+        .filter(Transaction.transaction_date.between(start_of_week,current_date))
+        .group_by(Customer.race, Transaction.transaction_date)
+        .order_by(Transaction.transaction_date.desc())
+    )
+    return total_qty, sex_data, age_data, race_data
