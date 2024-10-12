@@ -2,7 +2,7 @@ import React from 'react';
 import CurveChart from './CurveChart';
 import { Chart as ChartJS } from 'chart.js/auto'; //Do not delete
 
-const RaceChart = ({ onFullScreen, fullScreenData, topFiveProduct }) => {
+const RaceChart = ({ onFullScreen, fullScreenData, topFiveProduct, dataType }) => {
   
   const getChartOptions = {
     responsive: true,
@@ -46,7 +46,7 @@ const RaceChart = ({ onFullScreen, fullScreenData, topFiveProduct }) => {
     <div className="dashboard-col">
       <div className="card shadow">
         <div className="card-header py-3">
-          <h6 className="m-0 font-weight-bold text-primary">Top 5 Products</h6>
+          <h6 className="m-0 font-weight-bold text-primary">Top 5 Products/{dataType}</h6>
         </div>
         <div className="card-body"          
          onClick={() => {
