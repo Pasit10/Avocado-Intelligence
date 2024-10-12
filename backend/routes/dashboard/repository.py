@@ -123,11 +123,12 @@ async def getCustomerDataForStatistic():
 
 async def getTopProduct(datetype: str, limit: int):
     current_date = datetime.today()
-    current_date_str = current_date.strftime("%y-%m-%d")
+    current_date_str = current_date.strftime("%Y-%m-%d")  # Corrected format
 
+    # Query for the "day" datetype
     if datetype == "day":
         stmt = (
-            select(Product.name, func.sum(Transaction.qty))
+            select(Product.name, func.sum(Transaction.qty).label("total_qty"))
             .join(Transaction, Transaction.product_id == Product.product_id)
             .filter(Transaction.transaction_date == current_date_str)
             .group_by(Product.product_id)
@@ -135,10 +136,13 @@ async def getTopProduct(datetype: str, limit: int):
         )
         result = await db.execute(stmt)
         product_data = result.all()
-        return product_data
 
-    one_week_ago = (current_date - relativedelta(days=6)).strftime("%y-%m-%d")
-    one_month_ago = (current_date - relativedelta(months=1)).strftime("%y-%m-%d")
+        # Access product data as a list of tuples (product name, total_qty)
+        return [(row[0], row[1]) for row in product_data]
+
+    # Query for "week" or "month"
+    one_week_ago = (current_date - relativedelta(days=6)).strftime("%Y-%m-%d")
+    one_month_ago = (current_date - relativedelta(months=1)).strftime("%Y-%m-%d")
 
     start_date = one_week_ago if datetype == "week" else one_month_ago
 
@@ -152,7 +156,9 @@ async def getTopProduct(datetype: str, limit: int):
     )
     result = await db.execute(stmt)
     product_data = result.all()
-    return product_data
+
+    # Access product data as a list of tuples (product name, total_qty)
+    return [(row[0], row[1]) for row in product_data]
 
 async def getBestSellerProduct():
     stmt = (
