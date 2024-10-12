@@ -1,5 +1,7 @@
 fastapi
 sqlalchemy
+sqlalchemy[asyncio]
+aiomysql
 pymysql
 pydantic
 uvicorn
