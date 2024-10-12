@@ -53,6 +53,7 @@ function App() {
           setTransactionVisible={setTransactionsVisible}
           setQuery={setQuery}
           fetchData={fetchData}
+          setData={setData}
         />
       </div>
     </div>

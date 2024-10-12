@@ -9,7 +9,13 @@ import DeleteModal from '../modal/DeleteModal';
 import NotifyModal from '../modal/NotifyModal';
 import BoxAddTransaction from '../boxs/BoxAddTransaction';
 
-function SidebarAndNavbarPage({ ContentComponent, setDashboardVisible, setProductVisible, setTransactionVisible, setQuery, fetchData }) {
+function SidebarAndNavbarPage({
+  ContentComponent,
+  setDashboardVisible,
+  setProductVisible,
+  setTransactionVisible,
+  setData,
+  fetchData }) {
   // States for controlling the modals
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showAddModalProduct, setshowAddModalProduct] = useState(false);
@@ -33,9 +39,10 @@ function SidebarAndNavbarPage({ ContentComponent, setDashboardVisible, setProduc
 
   const [isBtnLoading, setIsBtnLoading] = useState(false);
 
+  const [searchQuery, setSearchQuery] = useState('')
   // useEffect(() => {
-  //   console.log(selectedRows)
-  // }, [selectedRows])
+  //   console.log(searchQuery)
+  // }, [searchQuery])
   // Functions to open/close modals
   const handleDeleteShow = () => {
     if (namePage !== "Dashboard") {
@@ -86,7 +93,7 @@ function SidebarAndNavbarPage({ ContentComponent, setDashboardVisible, setProduc
     setProductVisible(false);
     setTransactionVisible(false);
     // setQuery('')
-    fetchData('');
+    // fetchData('');
     setNamePage('Dashboard')
     setShowPropertyNavBar(false);
   }
@@ -182,7 +189,7 @@ function SidebarAndNavbarPage({ ContentComponent, setDashboardVisible, setProduc
 
         try {
           const result = await util.fetchPost('transaction/addtransaction', transaction_data)
-          console.log(result)
+          // console.log(result)
           if (result.code === 201) {
             setShowNotify(true);
             setMessage('customer_id ' + customer_result.detail['customer_id'] + ' added success')
@@ -214,6 +221,20 @@ function SidebarAndNavbarPage({ ContentComponent, setDashboardVisible, setProduc
     setIsBtnLoading(false)
   };
 
+  const handleSearch = async (query) => {
+    setSearchQuery(query);  // Update the state
+    const trimmedQuery = query.trim();  // Use the updated query directly
+
+    // console.log(trimmedQuery === '');
+    if (trimmedQuery !== '') {
+      const response = await util.fetchData(`product/searchproduct/?query=${trimmedQuery}`);
+      // console.log(response);
+      setData(response)
+    } else {
+      handleProductPage();  // Handle case when query is empty
+    }
+  };
+
   return (
     <div className="grid-container">
       {/* Sidebar */}
@@ -241,7 +262,11 @@ function SidebarAndNavbarPage({ ContentComponent, setDashboardVisible, setProduc
               <button className="btn btn-primary" onClick={handleAddShow}>Add</button>
             </div>
             <div className="search-container">
-              <input type="text" className="form-control" placeholder="Search..." />
+              {namePage !== 'All Transaction' && (
+                <input type="text" className="form-control" placeholder="Search..." value={searchQuery} onChange={e => {
+                  handleSearch(e.target.value)
+                }} />
+              )}
             </div>
           </div>
         )}
