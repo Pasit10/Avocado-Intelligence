@@ -68,7 +68,7 @@ function Dashboard() {
           return acc;
         }, { female: [], male: [] });
         setGenderStats(gender);
-
+        await new Promise(resolve => setTimeout(resolve, 3000)); //dalay 1 sec.
         const statisticsResponse = await fetch('http://localhost:8080/dashboard/getcustomerstatistic');
         console.log("B Start")
         if (!statisticsResponse.ok) {

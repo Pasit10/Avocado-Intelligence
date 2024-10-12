@@ -258,8 +258,8 @@ function SidebarAndNavbarPage({
           }}>
 
             <div className="navbar-container-buttons">
-              <button className="btn btn-primary me-3" onClick={handleDeleteShow}>Delete</button>
-              <button className="btn btn-primary" onClick={handleAddShow}>Add</button>
+              <button className="custom-btn me-3" onClick={handleDeleteShow}>Delete</button>
+              <button className="custom-btn me-3" onClick={handleAddShow}>Add</button>
             </div>
             <div className="search-container">
               {namePage !== 'All Transaction' && (
