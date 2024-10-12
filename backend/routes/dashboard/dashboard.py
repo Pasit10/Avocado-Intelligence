@@ -9,11 +9,11 @@ from . import schemas, repository
 dashboard = APIRouter()
 
 @dashboard.get(path="/getcustomer", status_code=status.HTTP_200_OK)
-def getCustomerData(datetype: str):
+async def getCustomerData(datetype: str):
     if datetype not in ["day", "week", "month"]:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid datatype value. Allowed values: day, week, month")
 
-    sex_data, age_data, race_data = repository.getCustomerData(datetype)
+    sex_data, age_data, race_data = await repository.getCustomerData(datetype)
     response_dict = {}
 
     if not sex_data or not age_data or not race_data:
@@ -78,8 +78,8 @@ def __calculate_percentage(count, total):
     return f"{(count / total) * 100:.0f}%" if total != 0 else "0%"
 
 @dashboard.get(path="/getcustomerstatistic",status_code=status.HTTP_200_OK)
-def getCustomerStatistic():
-    total_customer, sex_data, age_data, race_data = repository.getCustomerDataForSatatistic()
+async def getCustomerStatistic():
+    total_customer, sex_data, age_data, race_data = await repository.getCustomerDataForStatistic()
 
     response = {
         "sex": {
@@ -105,14 +105,14 @@ def getCustomerStatistic():
     return response
 
 @dashboard.get(path="/gettopproduct",status_code=status.HTTP_200_OK)
-def getTopProduct(datetype:str, limit:int):
+async def getTopProduct(datetype:str, limit:int):
     if datetype not in ["day", "week", "month"]:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid datatype value. Allowed values: day, week, month")
 
     if not isinstance(limit, int):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid datatype value. Allowed only integer")
 
-    product_data = repository.getTopProduct(datetype,limit)
+    product_data = await repository.getTopProduct(datetype,limit)
 
     response = []
     for product in product_data:
@@ -125,14 +125,17 @@ def getTopProduct(datetype:str, limit:int):
     return response
 
 @dashboard.get(path="/getbestsellerproduct",status_code=status.HTTP_200_OK)
-def getBestSellerProduct():
-    product = repository.getBestSellerProduct()
-    if product:
-        return {
-            "product_id": product.Product.product_id,
-            "name": product.Product.name,
-            "description": product.Product.detail,  # Assuming you have a description field
-            "price": product.Product.price,  # Assuming you have a price field
-            "total_qty": product.total_qty
-        }
-    return {"message": "No product found"}
+async def getBestSellerProduct():
+    product = await repository.getBestSellerProduct()
+    if not product:
+        return HTTPException(status_code=status.HTTP_204_NO_CONTENT,detail="No product found")
+
+    response = {
+                    "product_id": product.Product.product_id,
+                    "name": product.Product.name,
+                    "description": product.Product.detail,
+                    "price": product.Product.price,
+                    "product_img": product.Product.product_img,
+                    "total_qty": product.total_qty
+                }
+    return response

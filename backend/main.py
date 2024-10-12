@@ -2,7 +2,7 @@ from fastapi import FastAPI, APIRouter
 from starlette.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
-from config import database
+from config import database, async_database
 from routes.health import health
 from routes.customer import customer
 from routes.product import product
@@ -14,6 +14,7 @@ from routes.dashboard import dashboard
 async def lifespan(app: FastAPI):
     yield
     database.shutdown_db_section()
+    await async_database.shutdown_db_section()
 
 app = FastAPI(lifespan=lifespan)
 
