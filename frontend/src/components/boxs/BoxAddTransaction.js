@@ -3,7 +3,7 @@ import Table from "../table/Table";
 import util from "../../util/util";
 import BoxProduct from "./BoxProduct";
 
-const BoxAddTransaction = ({ selectedRows, setSelectedRows , listProduct, setListProduct}) => {
+const BoxAddTransaction = ({ selectedRows, setSelectedRows, listProduct, setListProduct }) => {
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchState, setSearchState] = useState(false);
@@ -24,8 +24,7 @@ const BoxAddTransaction = ({ selectedRows, setSelectedRows , listProduct, setLis
     }, []);
 
     useEffect(() => {
-        setListProduct(Array.from(selectedRows))
-        // console.log(selectedRows);
+        setListProduct(Array.from(selectedRows));
     }, [selectedRows]);
 
     const toggleSearch = () => {
@@ -37,20 +36,22 @@ const BoxAddTransaction = ({ selectedRows, setSelectedRows , listProduct, setLis
     };
 
     const tableStyle = {
-        maxHeight: '400px',  // Set max height for the table container
-        overflowY: 'auto',   // Enable vertical scrolling if content exceeds max height
-        transition: 'all 0.3s ease',  // Smooth transition for height changes
+        maxHeight: '400px',
+        overflowY: 'auto',
+        transition: 'all 0.3s ease',
     };
 
     return (
         <div className="h-100 d-inline-block">
             <div className="d-flex justify-content-between align-items-center">
-                <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Search..."
-                    onClick={toggleSearch} // Toggle search mode when clicking on the search field
-                />
+                <button
+                    type="button"
+                    className={searchState ? "btn btn-secondary" : "btn btn-primary"}
+                    style={{ width: '100%' }} // Set width to 100%
+                    onClick={toggleSearch} // Toggle search mode when clicking on the button
+                >
+                    Selelct product
+                </button>
                 {searchState && (
                     <button type="button" className="btn-close m-3" onClick={closeSearch}></button>
                 )}

@@ -6,13 +6,19 @@ const fetchData = async (query) => {
 
     try {
         const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`Network response was not ok: ${response.status_en}`);
+
+        // Get the response text
+        const text = await response.text();
+
+        // Only attempt to parse if the text is non-empty
+        if (text) {
+            result = JSON.parse(text);
+        } else {
+            result = [];  // Handle empty response
         }
-        result = await response.json();
     } catch (error) {
-        result = []
-        console.error(error);
+        result = [];  // Default to empty array in case of an error
+        console.error("Error fetching or parsing data:", error);
     }
 
     return result;
@@ -50,7 +56,7 @@ const fetchPost = async (path, data) => {
         });
 
         const result = await response.json();
-        console.log(result)
+        // console.log(result)
         if (result.code !== 201) {
             return result.detail[0];
         }
