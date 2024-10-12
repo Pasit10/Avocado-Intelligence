@@ -13,7 +13,7 @@ const NotifyModal = ({ showModal, setShowNotify, message, btnType }) => {
             <Modal.Body>
                 {message}
             </Modal.Body>
-            <Modal.Footer>
+            <Modal.Footer hidden={btnType === 'secondary'}>
                 <Button variant={btnType} onClick={handleClose}>
                     Close
                 </Button>

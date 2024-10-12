@@ -114,11 +114,20 @@ function SidebarAndNavbarPage({ ContentComponent, setDashboardVisible, setProduc
 
   const handleAddProduct = async () => {
     setIsBtnLoading(true);
+    const response = await fetch(imagePreview);   // Fetch the image
+    const blob = await response.blob();           // Convert response to a Blob
+
+    const stringBase64 = await new Promise((resolve, reject) => {  // Await the Promise
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);  // Resolve with Base64 string
+      reader.onerror = reject;  // Handle errors
+      reader.readAsDataURL(blob);  // Convert Blob to Base64
+    });
     const data = {
       name: addProductName,
       price: addProductPrice,
       detail: addProductDetail,
-      product_img: "imagePreview"
+      product_img: stringBase64.split(",")[1],
     };
 
     try {
@@ -143,6 +152,9 @@ function SidebarAndNavbarPage({ ContentComponent, setDashboardVisible, setProduc
   const handleAddTransaction = async () => {
     let customer_result = null;
     setIsBtnLoading(true)
+    setShowNotify(true);
+    setMessage('Adding new transaction')
+    setBtnType('secondary')
     if (imagePreview !== null) {
       if (selectedProductAddTransaction.size > 0) {
 
