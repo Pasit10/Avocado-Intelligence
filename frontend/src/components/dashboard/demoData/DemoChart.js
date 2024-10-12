@@ -1,10 +1,10 @@
 
 export const lineChartData = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat','Sun'],
     datasets: [
       {
-        label: 'Sales',
-        data: [65, 59, 80, 81, 56, 55],
+        label: 'Age',
+        // data: [18, 59, 80, 81, 56, 55, 40],
         fill: false,
         backgroundColor: 'rgba(75,192,192,0.2)',
         borderColor: 'rgba(75,192,192,1)',
@@ -13,29 +13,51 @@ export const lineChartData = {
   };
   
   export const barChartData = {
-    labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat','Sun', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat','Sun', 'Thu', 'Fri', 'Sat','Sun', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat','Sun', 'Thu', 'Fri', 'Sat','Sun', 'Tue', 'Wed', 'Thu'],
     datasets: [
       {
-        label: '# of Votes',
-        data: [12, 19, 3, 5, 2, 3],
-        backgroundColor: [
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(255, 206, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)',
-          'rgba(153, 102, 255, 0.2)',
-          'rgba(255, 159, 64, 0.2)',
-        ],
-        borderColor: [
-          'rgba(255, 99, 132, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-          'rgba(255, 159, 64, 1)',
-        ],
+        label: 'male',
+        data: [12, 19, 3, 5, 2, 3, 11, 19, 3, 5, 2, 3, 11], // ข้อมูลของผู้ชาย
+        backgroundColor: 'rgba(54, 162, 235, 0.2)', // สีฟ้า
+        borderColor: 'rgba(54, 162, 235, 1)', // ขอบสีฟ้าเข้ม
         borderWidth: 1,
       },
+      {
+        label: 'female',
+        data: [15, 9, 5, 8, 4, 7], // ข้อมูลของผู้หญิง
+        backgroundColor: 'rgba(255, 99, 132, 0.2)', // สีแดง
+        borderColor: 'rgba(255, 99, 132, 1)', // ขอบสีแดงเข้ม
+        borderWidth: 1,
+      },
+      {
+        label: 'female',
+        data: [15, 9, 5, 8, 4, 7], // ข้อมูลของผู้หญิง
+        backgroundColor: 'rgba(255, 99, 132, 0.2)', // สีแดง
+        borderColor: 'rgba(255, 99, 132, 1)', // ขอบสีแดงเข้ม
+        borderWidth: 1,
+      },
+      {
+        label: 'female',
+        data: [15, 9, 5, 8, 4, 7], // ข้อมูลของผู้หญิง
+        backgroundColor: 'rgba(255, 99, 132, 0.2)', // สีแดง
+        borderColor: 'rgba(255, 99, 132, 1)', // ขอบสีแดงเข้ม
+        borderWidth: 1,
+      },
+      {
+        label: 'female',
+        data: [15, 9, 5, 8, 4, 7], // ข้อมูลของผู้หญิง
+        backgroundColor: 'rgba(255, 99, 132, 0.2)', // สีแดง
+        borderColor: 'rgba(255, 99, 132, 1)', // ขอบสีแดงเข้ม
+        borderWidth: 1,
+      },
+      {
+        label: 'female',
+        data: [15, 9, 5, 8, 4, 7], // ข้อมูลของผู้หญิง
+        backgroundColor: 'rgba(255, 99, 132, 0.2)', // สีแดง
+        borderColor: 'rgba(255, 99, 132, 1)', // ขอบสีแดงเข้ม
+        borderWidth: 1,
+      },
+
     ],
   };
   
@@ -52,11 +74,11 @@ export const lineChartData = {
   };
   
   export const radarChartData = {
-    labels: ['Running', 'Swimming', 'Eating', 'Cycling'],
+    labels: ['อายุ', 'เพศ', 'สัญชาติ'],
     datasets: [
       {
         label: 'Activities',
-        data: [20, 10, 4, 2],
+        data: [19, 16, 16],
         fill: true,
         backgroundColor: 'rgba(255, 99, 132, 0.2)',
         borderColor: 'rgb(255, 99, 132)',
@@ -69,7 +91,7 @@ export const lineChartData = {
   };
   
   export const polarAreaChartData = {
-    labels: ['Red', 'Green', 'Yellow', 'Grey', 'Blue'],
+    labels: ['Asia', 'White', 'Black', 'India', 'Others'],
     datasets: [
       {
         label: 'My dataset',
@@ -80,10 +102,10 @@ export const lineChartData = {
   };
   
   export const polarAreaChartDataTwo = {
-    labels: ['Red', 'Green', 'Yellow', 'Grey', 'Blue'],
+    labels: ['ไอติม', 'แมว', 'เด็กเล็ก', 'คนแก่', 'คนท้อง'],
     datasets: [
       {
-        label: 'My dataset',
+        label: 'Product',
         data: [1, 30, 12, 50, 14],
         backgroundColor: ['rgb(255, 99, 132)', 'rgb(75, 192, 192)', 'rgb(255, 205, 86)', 'rgb(201, 203, 207)', 'rgb(54, 162, 235)'],
       },

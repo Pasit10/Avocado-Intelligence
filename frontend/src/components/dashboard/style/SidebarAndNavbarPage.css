@@ -5,7 +5,7 @@
     /* Full height */
     padding: 0px;
     /* Remove default padding */
-    background-color: #d3d3d3;
+    background-color: #2b2b2b;
     /* Light grey background similar to the image */
     position: fixed;
     top: 0;
@@ -38,9 +38,10 @@
 .custom-containersidebar .nav-item a {
     text-decoration: none;
     /* Remove underline from links */
-    color: black;
+    color: rgb(255, 255, 255);
     /* Link color */
     margin-left: 10px;
+    font-weight: bold;
     /* Space between icon and text */
 }
 
@@ -51,7 +52,7 @@
 
 /* Add hover effect */
 .custom-containersidebar .nav-item:hover {
-    background-color: #bfbfbf;
+    background-color: #4c4c4c;
     /* Lighter gray on hover */
     cursor: pointer;
     /* Show pointer on hover */
@@ -62,7 +63,7 @@
     width: 100%;
     height: 100px;
     padding: 20px;
-    background-color: #f3c3c3;
+    background-color: #2b2b2b;
     position: fixed;
     left: 15vw;
     display: flex;
@@ -79,6 +80,7 @@
 .navbar-title {
     font-size: 40px;
     margin: 0;
+    color: white;
     text-align: start;
 }
 
@@ -186,3 +188,18 @@
     justify-content: flex-start;
     /* Align items to the top */
 }
+
+.custom-btn {
+    background-color: #ff9c08; /* color btn */
+    color: white; /* color text */
+    border: none; 
+    padding: 10px 20px; /* btn size */
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    font-weight: bold;
+    /* margin: 4px 4px; */
+    cursor: pointer;
+    border-radius: 4px;
+  }
