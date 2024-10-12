@@ -78,7 +78,7 @@ function Dashboard() {
         const statisticsData = await statisticsResponse.json();
         setCustomerStatistics(statisticsData);
 
-        const topFiveProductResponse = await fetch('http://localhost:8080/dashboard/gettopproduct?datetype=day&limit=5')
+        const topFiveProductResponse = await fetch(`http://localhost:8080/dashboard/gettopproduct?datetype=${dateType}&limit=5`)
         if (!topFiveProductResponse.ok) {
           throw new Error('Network response was not ok');
         }
@@ -117,7 +117,7 @@ function Dashboard() {
         </div>
         <div className="dashboard-row">
           <StatisticalData customerStatistics={customerStatistics}/>
-          <TopSellerProduct onFullScreen={handleFullScreen} fullScreenData={handleFullScreenData} topFiveProduct={topFiveProductData}/>
+          <TopSellerProduct onFullScreen={handleFullScreen} fullScreenData={handleFullScreenData} topFiveProduct={topFiveProductData} dataType={dateType}/>
           <TopSeller bestSellerProductData={bestSellerProductData}/>
         </div>
         <FullScreenChart fullScreenChart={fullScreenChart} onClose={handleCloseFullScreen} data={fullScreenData}/>
