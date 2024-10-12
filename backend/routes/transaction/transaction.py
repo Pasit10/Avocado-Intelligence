@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, status
 from datetime import date
 from typing import List
+from decimal import Decimal
 
 from . import schemas, repository
 
@@ -135,89 +136,44 @@ def get_transaction(product_id: int):
     # Fetch transactions for the product
     total_qty, sex_data, age_data, race_data = repository.getTransactionLast7DayByProductID(product_id)
 
-    if sex_data or age_data or race_data:
-        transaction_data_dict = {}
-        for transaction_date, sex, count in sex_data:
-            date_str = transaction_date.strftime('%Y-%m-%d')
-            if date_str not in transaction_data_dict:
-                transaction_data_dict[date_str] = {
-                    "transaction_date": date_str,
-                    "sex": {},
-                    "age": {},
-                    "race": {}
-                }
-            if sex not in transaction_data_dict[date_str]["sex"]:
-                transaction_data_dict[date_str]["sex"][sex] = 0
-            transaction_data_dict[date_str]["sex"][sex] += int(count)
+    total_qty = 0 if not total_qty else total_qty
 
-        for transaction_date, age, count in age_data:
-            date_str = transaction_date.strftime('%Y-%m-%d')
-            if age not in transaction_data_dict[date_str]["age"]:
-                transaction_data_dict[date_str]["age"][age] = 0
-            transaction_data_dict[date_str]["age"][age] += int(count)
+    transaction_data_dict = {}
+    for transaction_date, sex, count in sex_data:
+        date_str = transaction_date.strftime('%Y-%m-%d')
+        if date_str not in transaction_data_dict:
+            transaction_data_dict[date_str] = {
+                "transaction_date": date_str,
+                "sex": {},
+                "age": {},
+                "race": {}
+            }
+        if sex not in transaction_data_dict[date_str]["sex"]:
+            transaction_data_dict[date_str]["sex"][sex] = 0
+        transaction_data_dict[date_str]["sex"][sex] += int(count)
 
-        for transaction_date, race, count in race_data:
-            date_str = transaction_date.strftime('%Y-%m-%d')
-            if race not in transaction_data_dict[date_str]["race"]:
-                transaction_data_dict[date_str]["race"][race] = 0
-            transaction_data_dict[date_str]["race"][race] += int(count)
+    for transaction_date, age, count in age_data:
+        date_str = transaction_date.strftime('%Y-%m-%d')
+        if age not in transaction_data_dict[date_str]["age"]:
+            transaction_data_dict[date_str]["age"][age] = 0
+        transaction_data_dict[date_str]["age"][age] += int(count)
 
-        transaction_data = list(transaction_data_dict.values())
-        print(transaction_data)
+    for transaction_date, race, count in race_data:
+        date_str = transaction_date.strftime('%Y-%m-%d')
+        if race not in transaction_data_dict[date_str]["race"]:
+            transaction_data_dict[date_str]["race"][race] = 0
+        transaction_data_dict[date_str]["race"][race] += int(count)
 
-        response = {
-            "product": {
-                "product_id": product.product_id,
-                "product_img": product.product_img,  # Assuming image is bytes and needs no further processing
-                "name": product.name,
-                "price": product.price,
-                "detail": product.detail,
-                "total_qty": int(total_qty[0].total_qty)
-            },
-            "transaction_data": transaction_data
-        }
-
-        return response
-
-# response_dict = {}
-
-#     for transaction_date, sex, count in sex_data:
-#         date_str = transaction_date.strftime('%Y-%m-%d')
-#         if date_str not in response_dict:
-#             response_dict[date_str] = {
-#                 "transaction_date": date_str,
-#                 "sex": {},
-#                 "age": {},
-#                 "race": {}
-#             }
-#         if sex not in response_dict[date_str]["sex"]:
-#             response_dict[date_str]["sex"][sex] = 0
-#         response_dict[date_str]["sex"][sex] += int(count)
-
-#     for transaction_date, avg_age in age_data:
-#         date_str = transaction_date.strftime('%Y-%m-%d')
-#         if date_str not in response_dict:
-#             response_dict[date_str] = {
-#                 "transaction_date": date_str,
-#                 "sex": {},
-#                 "age": {},
-#                 "race": {}
-#             }
-
-#         response_dict[date_str]["age"]["avg"] = float(avg_age)
-
-#     for transaction_date, race, count in race_data:
-#         date_str = transaction_date.strftime('%Y-%m-%d')
-#         if date_str not in response_dict:
-#             response_dict[date_str] = {
-#                 "transaction_date": date_str,
-#                 "sex": {},
-#                 "age": {},
-#                 "race": {}
-#             }
-
-#         if race not in response_dict[date_str]["race"]:
-#             response_dict[date_str]["race"][race] = 0
-#         response_dict[date_str]["race"][race] += int(count)
-
-#     response_list = list(response_dict.values())
+    transaction_data = list(transaction_data_dict.values())
+    response = {
+        "product": {
+            "product_id": product.product_id,
+            "product_img": product.product_img,
+            "name": product.name,
+            "price": product.price,
+            "detail": product.detail,
+            "total_qty": total_qty
+        },
+        "transaction_data": transaction_data
+    }
+    return response

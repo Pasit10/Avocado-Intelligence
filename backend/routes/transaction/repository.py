@@ -82,12 +82,10 @@ def getTransactionLast7DayByProductID(product_id: int):
     current_date = datetime.today()
     start_of_week = current_date - timedelta(days=7)
     total_qty = (
-        db.query(func.sum(Transaction.qty).label("total_qty"))
+        db.query(func.sum(Transaction.qty))
         .filter(Transaction.product_id == product_id)
         .filter(Transaction.transaction_date.between(start_of_week,current_date))
-        .order_by(Transaction.transaction_date.desc())
-        .all()
-    )
+    ).scalar()
 
     sex_data = (
         db.query(Transaction.transaction_date, Customer.sex, func.count(func.distinct(Customer.customer_id)))

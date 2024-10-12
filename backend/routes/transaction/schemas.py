@@ -57,9 +57,9 @@ class ProductTransaction(BaseModel):
 
 class TransactionDataSchema(BaseModel):
     transaction_date: date
-    sex: Dict[str, int]  # A dictionary where keys are 'female', 'male' and values are the counts
-    age: Dict[str, int]  # A dictionary where keys are age groups and values are the counts
-    race: Dict[str, int]  # A dictionary where keys are race categories (like 'Black', 'White') and values are counts
+    sex: Dict[str, int]
+    age: Dict[str, int]
+    race: Dict[str, int]
 
 class TransactionProduct(BaseModel):
     product: ProductTransaction

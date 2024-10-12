@@ -103,3 +103,7 @@ GROUP BY product.product_id
 
 SELECT * FROM product
 WHERE product_id LIKE '%query%' OR name LIKE '%query%'
+
+SELECT product.product_id,sum(transaction.qty)
+FROM product INNER JOIN transaction on product.product_id = transaction.product_id
+WHERE product.product_id = 2;
