@@ -13,6 +13,7 @@ function Dashboard() {
   const [fullScreenChart, setFullScreenChart] = useState(null);
   const [fullScreenData, setFullScreenData] = useState(null);
   const [customerStatistics, setCustomerStatistics] = useState(null);
+  const [topFiveProduct,setTopFiveProduct] = useState([])
 
   const [dateType, setDateType] = useState('week'); 
   const [ageStats, setAgeStats] = useState([]);
@@ -68,14 +69,20 @@ function Dashboard() {
           return acc;
         }, { female: [], male: [] });
         setGenderStats(gender);
-        await new Promise(resolve => setTimeout(resolve, 3000)); //dalay 1 sec.
+
         const statisticsResponse = await fetch('http://localhost:8080/dashboard/getcustomerstatistic');
-        console.log("B Start")
         if (!statisticsResponse.ok) {
           throw new Error('Network response was not ok');
         }
         const statisticsData = await statisticsResponse.json();
         setCustomerStatistics(statisticsData);
+
+        const topFiveProductResponse = await fetch('http://localhost:8080/dashboard/gettopproduct?datetype=day&limit=5')
+        if (!topFiveProductResponse.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const topFiveProduct = await topFiveProductResponse.json();
+        setTopFiveProduct(topFiveProduct);
   
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -102,7 +109,7 @@ function Dashboard() {
         </div>
         <div className="dashboard-row">
           <StatisticalData customerStatistics={customerStatistics}/>
-          <TopSellerProduct onFullScreen={handleFullScreen} fullScreenData={handleFullScreenData}/>
+          <TopSellerProduct onFullScreen={handleFullScreen} fullScreenData={handleFullScreenData} topFiveProduct={topFiveProduct}/>
           <TopSeller/>
         </div>
         <FullScreenChart fullScreenChart={fullScreenChart} onClose={handleCloseFullScreen} data={fullScreenData}/>
