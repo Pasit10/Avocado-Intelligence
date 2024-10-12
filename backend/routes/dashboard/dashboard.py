@@ -1,19 +1,21 @@
 from fastapi import APIRouter, HTTPException, Query, status, Depends
 from fastapi.responses import JSONResponse
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 from sqlalchemy import func, extract
 from datetime import datetime, timedelta
 
+from config.async_database import get_db
 from . import schemas, repository
 
 dashboard = APIRouter()
 
 @dashboard.get(path="/getcustomer", status_code=status.HTTP_200_OK)
-async def getCustomerData(datetype: str):
+async def getCustomerData(datetype: str, db: AsyncSession = Depends(get_db)):
     if datetype not in ["day", "week", "month"]:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid datatype value. Allowed values: day, week, month")
 
-    sex_data, age_data, race_data = await repository.getCustomerData(datetype)
+    sex_data, age_data, race_data = await repository.getCustomerData(datetype,db)
     response_dict = {}
 
     if not sex_data or not age_data or not race_data:
@@ -78,8 +80,8 @@ def __calculate_percentage(count, total):
     return f"{(count / total) * 100:.0f}%" if total != 0 else "0%"
 
 @dashboard.get(path="/getcustomerstatistic",status_code=status.HTTP_200_OK)
-async def getCustomerStatistic():
-    total_customer, sex_data, age_data, race_data = await repository.getCustomerDataForStatistic()
+async def getCustomerStatistic(db: AsyncSession = Depends(get_db)):
+    total_customer, sex_data, age_data, race_data = await repository.getCustomerDataForStatistic(db)
 
     response = {
         "sex": {
@@ -105,14 +107,14 @@ async def getCustomerStatistic():
     return response
 
 @dashboard.get(path="/gettopproduct", status_code=status.HTTP_200_OK)
-async def getTopProduct(datetype: str, limit: int):
+async def getTopProduct(datetype: str, limit: int, db: AsyncSession = Depends(get_db)):
     if datetype not in ["day", "week", "month"]:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid datatype value. Allowed values: day, week, month")
 
     if not isinstance(limit, int):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid datatype value. Allowed only integer")
 
-    product_data = await repository.getTopProduct(datetype, limit)
+    product_data = await repository.getTopProduct(datetype, limit, db)
 
     response = []
     for product in product_data:
@@ -125,8 +127,8 @@ async def getTopProduct(datetype: str, limit: int):
     return response
 
 @dashboard.get(path="/getbestsellerproduct",status_code=status.HTTP_200_OK)
-async def getBestSellerProduct():
-    product = await repository.getBestSellerProduct()
+async def getBestSellerProduct(db: AsyncSession = Depends(get_db)):
+    product = await repository.getBestSellerProduct(db)
     if not product:
         return HTTPException(status_code=status.HTTP_204_NO_CONTENT,detail="No product found")
 

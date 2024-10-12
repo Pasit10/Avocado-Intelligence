@@ -1,5 +1,8 @@
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
+from fastapi import FastAPI, Depends
+from typing import AsyncGenerator
+
 from sqlalchemy.ext.declarative import declarative_base
 
 from constant import constants
@@ -18,11 +21,13 @@ SessionLocal = sessionmaker(
     autoflush=False,
 )
 
-# Create a base class for models
-Base = declarative_base()
-db = SessionLocal()
+# # Create a base class for models
+# Base = declarative_base()
+
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
+    async with SessionLocal() as session:
+        yield session
 
 async def shutdown_db_section():
     print('[ASYNC DATABASE]: database has been close')
-    await db.close()
     await engine.dispose()
