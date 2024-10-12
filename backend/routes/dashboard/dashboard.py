@@ -104,21 +104,21 @@ async def getCustomerStatistic():
     }
     return response
 
-@dashboard.get(path="/gettopproduct",status_code=status.HTTP_200_OK)
-async def getTopProduct(datetype:str, limit:int):
+@dashboard.get(path="/gettopproduct", status_code=status.HTTP_200_OK)
+async def getTopProduct(datetype: str, limit: int):
     if datetype not in ["day", "week", "month"]:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid datatype value. Allowed values: day, week, month")
 
     if not isinstance(limit, int):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid datatype value. Allowed only integer")
 
-    product_data = await repository.getTopProduct(datetype,limit)
+    product_data = await repository.getTopProduct(datetype, limit)
 
     response = []
     for product in product_data:
         product_dict = {
-            "name": product.name,
-            "total_qty": product.total_qty
+            "name": product[0],       # Accessing the product name
+            "total_qty": product[1]   # Accessing the total quantity
         }
         response.append(product_dict)
 
