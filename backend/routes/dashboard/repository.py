@@ -131,6 +131,7 @@ async def getTopProduct(datetype: str, limit: int, db: AsyncSession):
             .join(Transaction, Transaction.product_id == Product.product_id)
             .filter(Transaction.transaction_date == current_date_str)
             .group_by(Product.product_id)
+            .order_by(func.sum(Transaction.qty).desc())
             .limit(limit)
         )
         result = await db.execute(stmt)
