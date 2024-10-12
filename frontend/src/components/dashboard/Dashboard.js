@@ -13,7 +13,8 @@ function Dashboard() {
   const [fullScreenChart, setFullScreenChart] = useState(null);
   const [fullScreenData, setFullScreenData] = useState(null);
   const [customerStatistics, setCustomerStatistics] = useState(null);
-  const [topFiveProduct,setTopFiveProduct] = useState([])
+  const [topFiveProductData,setTopFiveProduct] = useState([])
+  const [bestSellerProductData ,setbestSellerProduct] = useState([])
 
   const [dateType, setDateType] = useState('week'); 
   const [ageStats, setAgeStats] = useState([]);
@@ -83,6 +84,13 @@ function Dashboard() {
         }
         const topFiveProduct = await topFiveProductResponse.json();
         setTopFiveProduct(topFiveProduct);
+
+        const bestSellerProductResponse = await fetch('http://localhost:8080/dashboard/getbestsellerproduct')
+        if (!bestSellerProductResponse.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const bestSellerProduct = await bestSellerProductResponse.json();
+        setbestSellerProduct(bestSellerProduct);
   
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -109,8 +117,8 @@ function Dashboard() {
         </div>
         <div className="dashboard-row">
           <StatisticalData customerStatistics={customerStatistics}/>
-          <TopSellerProduct onFullScreen={handleFullScreen} fullScreenData={handleFullScreenData} topFiveProduct={topFiveProduct}/>
-          <TopSeller/>
+          <TopSellerProduct onFullScreen={handleFullScreen} fullScreenData={handleFullScreenData} topFiveProduct={topFiveProductData}/>
+          <TopSeller bestSellerProductData={bestSellerProductData}/>
         </div>
         <FullScreenChart fullScreenChart={fullScreenChart} onClose={handleCloseFullScreen} data={fullScreenData}/>
       </div>
