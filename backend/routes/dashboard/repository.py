@@ -1,16 +1,15 @@
-from fastapi import HTTPException, status
-from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.future import select
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from fastapi import Depends
 from sqlalchemy import func, case
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
-from config.async_database import db
 from model.customer import Customer
 from model.product import Product
 from model.transaction import Transaction
 
-async def getCustomerData(datetype: str):
+async def getCustomerData(datetype: str, db: AsyncSession):
     current_date = datetime.today()
     current_date_str = current_date.strftime("%y-%m-%d")
 
@@ -77,7 +76,7 @@ async def getCustomerData(datetype: str):
 
     return sex_data.all(), age_data.all(), race_data.all()
 
-async def getCustomerDataForStatistic():
+async def getCustomerDataForStatistic(db: AsyncSession):
     # Total customer count
     total_customer_stmt = select(func.count(Customer.customer_id))
     total_customer_result = await db.execute(total_customer_stmt)
@@ -121,7 +120,7 @@ async def getCustomerDataForStatistic():
 
     return total_customer, sex_data, age_data, race_data
 
-async def getTopProduct(datetype: str, limit: int):
+async def getTopProduct(datetype: str, limit: int, db: AsyncSession):
     current_date = datetime.today()
     current_date_str = current_date.strftime("%Y-%m-%d")  # Corrected format
 
@@ -160,7 +159,7 @@ async def getTopProduct(datetype: str, limit: int):
     # Access product data as a list of tuples (product name, total_qty)
     return [(row[0], row[1]) for row in product_data]
 
-async def getBestSellerProduct():
+async def getBestSellerProduct(db: AsyncSession):
     stmt = (
         select(Product, func.sum(Transaction.qty).label("total_qty"))
         .join(Transaction, Product.product_id == Transaction.product_id)
