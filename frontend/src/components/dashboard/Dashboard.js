@@ -1,124 +1,111 @@
-import React, { useState } from 'react';
-import { Line, Bar, Doughnut, Radar, PolarArea } from 'react-chartjs-2'; //npm install chart.js react-chartjs-2
-import { Chart as ChartJS } from 'chart.js/auto'; //Do not delete
-import { lineChartData, barChartData, doughnutChartData, radarChartData, polarAreaChartData, polarAreaChartDataTwo } from './demoData/DemoChart';
-import MyAreaChart from './MyAreaChart';
+import React, { useState, useEffect } from "react";
+import AgeChart from './AgeChart';
+import GenderChart from './GenderChart';
+import RaceChart from './RaceChart';
+import TopSeller from './TopSeller';
+import StatisticalData from './StatisticalData';
+import FullScreenChart from './FullScreenChart';
+import TopSellerProduct from "./TopSellerProduct";
 import './style/Dashboard.css';
+import { Chart as ChartJS } from 'chart.js/auto'; // Do not delete
 
-function Dashboard({selectedRows, setSelectedRows}) {
+function Dashboard() {
   const [fullScreenChart, setFullScreenChart] = useState(null);
+  const [fullScreenData, setFullScreenData] = useState(null);
+  const [customerStatistics, setCustomerStatistics] = useState(null);
+
+  const [dateType, setDateType] = useState('week'); 
+  const [ageStats, setAgeStats] = useState([]);
+  const [raceStats, setRaceStats] = useState([]);
+  const [dateLog, setDateLog] = useState([]);
+  const [genderStats, setGenderStats] = useState({ female: [], male: [] });
 
   const handleFullScreen = (chartType) => {
     setFullScreenChart(chartType);
+  };
+
+  const handleFullScreenData = (data) => {
+    setFullScreenData(data);
   };
 
   const handleCloseFullScreen = () => {
     setFullScreenChart(null);
   };
 
+  const handleDateTypeChange = (event) => {
+    setDateType(event.target.value);
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+
+        const customerResponse = await fetch(`http://localhost:8080/dashboard/getcustomer?datetype=${dateType}`);
+        if (!customerResponse.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const customerData = await customerResponse.json();
+  
+        const ages = customerData.map(item => item.age.avg);
+        setAgeStats(ages);
+        
+        const date = customerData.map(item => item.transaction_date);
+        setDateLog(date);
+  
+        const raceStatsArray = customerData.map(item => ({
+          transaction_date: item.transaction_date,
+          Asian: item.race.Asian || 0,
+          White: item.race.White || 0,
+          Black: item.race.Black || 0,
+          Indian: item.race.Indian || 0,
+          Others: item.race.Others || 0,
+        }));
+        setRaceStats(raceStatsArray);
+  
+        const gender = customerData.reduce((acc, item) => {
+          acc.female.push(item.sex.female || 0);
+          acc.male.push(item.sex.male || 0);
+          return acc;
+        }, { female: [], male: [] });
+        setGenderStats(gender);
+
+        const statisticsResponse = await fetch('http://localhost:8080/dashboard/getcustomerstatistic');
+        console.log("B Start")
+        if (!statisticsResponse.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const statisticsData = await statisticsResponse.json();
+        setCustomerStatistics(statisticsData);
+  
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+  
+    fetchData();
+  }, [dateType]);
+  
   return (
     <div id="content-wrapper" className="d-flex flex-column">
       <div id="content" className="container-fluid">
-        <div className="dashboard-row">
-          {/* Line Chart */}
-          <div className="dashboard-col">
-            <div className="card shadow">
-              <div className="card-header py-3">
-                <h6 className="m-0 font-weight-bold text-primary">Line Chart</h6>
-              </div>
-              <div className="card-body" onClick={() => handleFullScreen('Line')}>
-                <div className="chart-container">
-                  <Line data={lineChartData} />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Bar Chart */}
-          <div className="dashboard-col">
-            <div className="card shadow">
-              <div className="card-header py-3">
-                <h6 className="m-0 font-weight-bold text-primary">Bar Chart</h6>
-              </div>
-              <div className="card-body" onClick={() => handleFullScreen('Bar')}>
-                <div className="chart-container">
-                  <Bar data={barChartData} />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Doughnut Chart */}
-          <div className="dashboard-col">
-            <div className="card shadow">
-              <div className="card-header py-3">
-                <h6 className="m-0 font-weight-bold text-primary">Doughnut Chart</h6>
-              </div>
-              <div className="card-body" onClick={() => handleFullScreen('Doughnut')}>
-                <div className="chart-container">
-                  <Doughnut data={doughnutChartData} />
-                </div>
-              </div>
-            </div>
-          </div>
+        <div className="select-container">
+          <label htmlFor="dateTypeSelect">Select Data Type: </label>
+          <select id="dateTypeSelect" value={dateType} onChange={handleDateTypeChange}>
+            <option value="week">Week</option>
+            <option value="month">Month</option>
+          </select>
         </div>
-
         <div className="dashboard-row">
-          {/* Radar Chart */}
-          <div className="dashboard-col">
-            <div className="card shadow">
-              <div className="card-header py-3">
-                <h6 className="m-0 font-weight-bold text-primary">Radar Chart</h6>
-              </div>
-              <div className="card-body" onClick={() => handleFullScreen('Radar')}>
-                <div className="chart-container">
-                  <Radar data={radarChartData} />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Polar Area Chart */}
-          <div className="dashboard-col">
-            <div className="card shadow">
-              <div className="card-header py-3">
-                <h6 className="m-0 font-weight-bold text-primary">Polar Area Chart</h6>
-              </div>
-              <div className="card-body" onClick={() => handleFullScreen('PolarArea')}>
-                <div className="chart-container">
-                  <PolarArea data={polarAreaChartData} />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* My Area Chart */}
-          <div className="dashboard-col">
-            <div className="card shadow">
-              <div className="card-header py-3">
-                <h6 className="m-0 font-weight-bold text-primary">Polar Area Chart 2</h6>
-              </div>
-              <div className="card-body" onClick={() => handleFullScreen('PolarArea2')}>
-                <div className="chart-container">
-                  <MyAreaChart data={polarAreaChartDataTwo} />
-                </div>
-              </div>
-            </div>
-          </div>
+          <AgeChart onFullScreen={handleFullScreen} fullScreenData={handleFullScreenData} ageStats={ageStats} dataType={dateType} dateLog={dateLog}/>
+          <GenderChart onFullScreen={handleFullScreen} fullScreenData={handleFullScreenData} genderStats={genderStats} dataType={dateType} dateLog={dateLog}/>
+          <RaceChart onFullScreen={handleFullScreen} fullScreenData={handleFullScreenData} raceStats={raceStats} dataType={dateType} dateLog={dateLog}/>
         </div>
-
-        {fullScreenChart && (
-          <div className="fullscreen-overlay" onClick={handleCloseFullScreen}>
-            <div className="fullscreen-chart">
-              {fullScreenChart === 'Line' && <Line data={lineChartData} />}
-              {fullScreenChart === 'Bar' && <Bar data={barChartData} />}
-              {fullScreenChart === 'Doughnut' && <Doughnut data={doughnutChartData} />}
-              {fullScreenChart === 'Radar' && <Radar data={radarChartData} />}
-              {fullScreenChart === 'PolarArea' && <PolarArea data={polarAreaChartData} />}
-              {fullScreenChart === 'PolarArea2' && <MyAreaChart data={polarAreaChartDataTwo} />}
-            </div>
-          </div>
-        )}
+        <div className="dashboard-row">
+          <StatisticalData customerStatistics={customerStatistics}/>
+          <TopSellerProduct onFullScreen={handleFullScreen} fullScreenData={handleFullScreenData}/>
+          <TopSeller/>
+        </div>
+        <FullScreenChart fullScreenChart={fullScreenChart} onClose={handleCloseFullScreen} data={fullScreenData}/>
       </div>
     </div>
   );
