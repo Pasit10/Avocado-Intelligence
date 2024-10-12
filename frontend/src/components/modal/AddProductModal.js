@@ -38,6 +38,7 @@ const AddProductModal = ({
                                 <input
                                     type="file"
                                     id="formFile"
+                                    accept="image/*"
                                     onChange={handleFileChange}
                                     style={{ display: 'none' }} // Hide the default input
                                 />
