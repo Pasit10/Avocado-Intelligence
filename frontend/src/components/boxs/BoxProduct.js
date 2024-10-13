@@ -53,32 +53,48 @@ const BoxProduct = ({ id }) => {
             const xAxis = []
             const group = []
             const series = []
-            console.log(transaction_data)
-            transaction_data.forEach(transaction => {
-                // Extract the transaction_date and push to xAxis array
-                xAxis.push(transaction.transaction_date);
+            // console.log(transaction_data)
+            const series_values = []
 
-                // Check if the filteredCategory (e.g., 'sex') exists in the transaction
+            // สร้างแกน X และ group จาก transaction_data
+            transaction_data.forEach(transaction => {
+                xAxis.push(transaction.transaction_date);
                 const filterData = transaction[filteredData];
-                const values = []
                 if (filterData) {
+                    const values = {}
+                    // วนลูปเพื่อสร้าง group และค่าที่เกี่ยวข้อง
                     Object.entries(filterData).forEach(([label, value]) => {
-                        // Check if the label already exists in the group array to avoid duplicates
                         if (!group.includes(label)) {
                             group.push(label);
                         }
-                        values.push(value)
+                        values[label] = value
                     });
+                    series_values.push(values)
                 }
-                series.push(values);
             });
+
+            // สร้าง series จาก series_values
+            series_values.forEach(sre => {
+                const value = []
+                group.forEach(grp => {
+                    // ใช้ hasOwnProperty หรือเช็คด้วย !== undefined
+                    if (!sre.hasOwnProperty(grp)) {
+                        value.push(0);  // ถ้าไม่มีค่า ให้ใช้ 0
+                    } else {
+                        value.push(sre[grp]);  // ถ้ามีค่า ให้ใช้ค่าที่ได้
+                    }
+                });
+                series.push(value);  // เพิ่มค่า value ลงใน series
+            });
+
+            // console.log(series_values);
             setXAxis(xAxis);
             setGroup(group);
             setSeries(series);
 
-            console.log(xAxis);
-            console.log(group);
-            console.log(series);
+            // console.log(xAxis);
+            // console.log(group);
+            // console.log(series);
         }
 
     }, [data, filteredData]);
