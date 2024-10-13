@@ -47,14 +47,38 @@ const BoxProduct = ({ id }) => {
 
     useEffect(() => {
         if (data !== null) {
-            // console.log(data["dates"]);
-            setXAxis(data["dates"]);
-            setGroup(data["group"][filteredData]);
-            setSeries(data["series"][filteredData]);
 
-            // console.log(xAxis);
-            // console.log(group);
-            // console.log(series);
+            // console.log(data["dates"]);
+            const transaction_data = data["transaction_data"];
+            const xAxis = []
+            const group = []
+            const series = []
+            console.log(transaction_data)
+            transaction_data.forEach(transaction => {
+                // Extract the transaction_date and push to xAxis array
+                xAxis.push(transaction.transaction_date);
+
+                // Check if the filteredCategory (e.g., 'sex') exists in the transaction
+                const filterData = transaction[filteredData];
+                const values = []
+                if (filterData) {
+                    Object.entries(filterData).forEach(([label, value]) => {
+                        // Check if the label already exists in the group array to avoid duplicates
+                        if (!group.includes(label)) {
+                            group.push(label);
+                        }
+                        values.push(value)
+                    });
+                }
+                series.push(values);
+            });
+            setXAxis(xAxis);
+            setGroup(group);
+            setSeries(series);
+
+            console.log(xAxis);
+            console.log(group);
+            console.log(series);
         }
 
     }, [data, filteredData]);
