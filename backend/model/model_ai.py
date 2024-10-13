@@ -3,6 +3,28 @@ import os
 
 from constant import constants
 
+def load_model_sex():
+    model_sex = None
+    try:
+        if not hasattr(constants, 'PATH_MODEL_SEX') or not os.path.exists(constants.PATH_MODEL_SEX):
+            raise FileNotFoundError(f"[Model]: Model path '{constants.PATH_MODEL_SEX}' not found or not defined")
+
+        if not hasattr(constants, 'PATH_WEIGHTS_SEX') or not os.path.exists(constants.PATH_WEIGHTS_SEX):
+            raise FileNotFoundError(f"[Model]: Weights path '{constants.PATH_WEIGHTS_SEX}' not found or not defined")
+
+        model_sex = tf.keras.models.load_model(constants.PATH_MODEL_SEX)
+        model_sex.load_weights(constants.PATH_WEIGHTS_SEX)
+        print("[Model SEX]: Model and weights loaded successfully")
+    except FileNotFoundError:
+        print("[Model]: cannot download model or wights sex")
+        return
+    except AttributeError as e:
+        print(f"[Error]: Constants not properly defined: {e}")
+    except Exception as e:
+        print(f"[Error]: An unexpected error occurred: {e}")
+
+    return model_sex
+
 def load_model_age():
     model_age = None
     try:
@@ -19,7 +41,8 @@ def load_model_age():
         print("[Model Age]: Model and weights loaded successfully")
 
     except FileNotFoundError as e:
-        print(f"[Error]: {e}")
+        print("[Model]: cannot download model or wights race")
+        return None
     except AttributeError as e:
         print(f"[Error]: Constants not properly defined: {e}")
     except Exception as e:

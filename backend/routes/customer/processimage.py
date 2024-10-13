@@ -8,6 +8,7 @@ import random
 
 from model import model_ai
 
+model_sex = model_ai.load_model_sex()
 model_age = model_ai.load_model_age()
 model_race = model_ai.load_model_race()
 
@@ -40,6 +41,11 @@ def processIMG(customer_img: str):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid image data")
 
 def predict(input_img:np.array):
+    # predict sex
+    sex = model_sex.predict(input_img)
+    sex_class_idx = np.argmax(sex, axis=1)[0]
+    predicted_sex = CLASS_LABEL_SEX_DICT[sex_class_idx]
+
     # predict age
     predicted_age = model_age.predict(input_img)[0][0]
     predicted_age = round(predicted_age)
@@ -55,5 +61,5 @@ def predict(input_img:np.array):
     output_list.append(random.randint(0,100)) # random age
     output_list.append(random.randint(0,4)) # random race
 
-    return_list = [CLASS_LABEL_SEX_DICT[output_list[0]],predicted_age,predicted_race]
+    return_list = [predicted_sex, predicted_age, predicted_race]
     return return_list
