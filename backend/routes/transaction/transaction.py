@@ -1,15 +1,17 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Depends
+from sqlalchemy.orm import Session
 from datetime import date
 from typing import List
 from decimal import Decimal
 
+from config.database import get_db
 from . import schemas, repository
 
 transaction = APIRouter()
 
 @transaction.get(path="/gettransaction",status_code=status.HTTP_200_OK,response_model=List[schemas.TransactionResponse])
-def getAllTransaction():
-    transactions = repository.getAllTransaction()
+def getAllTransaction(db :Session = Depends(get_db)):
+    transactions = repository.getAllTransaction(db)
     response_transactions = {}
 
     for transaction in transactions:
@@ -30,11 +32,11 @@ def getAllTransaction():
     return response
 
 @transaction.post(path="/addtransaction",status_code=status.HTTP_201_CREATED)
-def addTransaction(transaction_request:schemas.TransactionRequest):
+def addTransaction(transaction_request:schemas.TransactionRequest, db :Session = Depends(get_db)):
     if transaction_request.customer_id <= 0:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="customer_id less than zero")
 
-    customer = repository.findCustomerByID(transaction_request.customer_id)
+    customer = repository.findCustomerByID(transaction_request.customer_id, db)
     if not customer:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="customer not found")
 
@@ -42,7 +44,7 @@ def addTransaction(transaction_request:schemas.TransactionRequest):
         if product.product_id <= 0:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=f"product_id {product.product_id} less than zero")
 
-        load_product = repository.findProductByID(product.product_id)
+        load_product = repository.findProductByID(product.product_id, db)
         if not load_product:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail=f"product {product.product_id} not found")
 
@@ -52,7 +54,7 @@ def addTransaction(transaction_request:schemas.TransactionRequest):
             qty=product.qty,
             transaction_date=date.today()
         )
-        repository.addTransaction(create_transaction)
+        repository.addTransaction(create_transaction, db)
 
     return {
         "code": status.HTTP_201_CREATED,
@@ -60,44 +62,44 @@ def addTransaction(transaction_request:schemas.TransactionRequest):
     }
 
 @transaction.delete(path="/deletetransaction",status_code=status.HTTP_200_OK)
-def deleteTransacrion(customer_id, product_id):
+def deleteTransacrion(customer_id, product_id, db :Session = Depends(get_db)):
     if customer_id.lower() == 'all':
         product_id = int(product_id)
         if product_id <= 0:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=f"product_id less than zero")
 
-        transaction_list = repository.findTransactionByProductId(product_id)
+        transaction_list = repository.findTransactionByProductId(product_id, db)
         if len(transaction_list) == 0:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail=f"transaction not found")
-        repository.deleteTransactionByProductId(product_id)
+        repository.deleteTransactionByProductId(product_id, db)
     elif product_id.lower() == 'all':
         customer_id = int(customer_id)
         if customer_id <= 0:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="customer_id less than zero")
 
-        transaction_list = repository.findTransactionByCustomerId(customer_id)
+        transaction_list = repository.findTransactionByCustomerId(customer_id, db)
         if len(transaction_list) == 0:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail=f"transaction not found")
 
-        repository.deleteTransactionByCustomerId(customer_id)
+        repository.deleteTransactionByCustomerId(customer_id, db)
     else:
-        transaction = repository.findTransactionById(customer_id,product_id)
+        transaction = repository.findTransactionById(customer_id,product_id, db)
         if not transaction:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail=f"transaction not found")
 
-        repository.deleteTransaction(customer_id,product_id)
+        repository.deleteTransaction(customer_id,product_id, db)
     return status.HTTP_200_OK
 
 @transaction.get(path="/gettransaction/{customer_id}",status_code=status.HTTP_200_OK,response_model=schemas.TransactionResponseByID)
-def getTransactionByID(customer_id:int):
+def getTransactionByID(customer_id:int, db :Session = Depends(get_db)):
     if customer_id < 0:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail='customer_id less than zero')
 
-    transactions = repository.getTransactionByID(customer_id)
+    transactions = repository.getTransactionByID(customer_id ,db)
     if not transactions:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail=f"transaction not found")
 
-    customer = repository.findCustomerByID(customer_id)
+    customer = repository.findCustomerByID(customer_id ,db)
     if not customer:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail=f"customer not found")
 
@@ -108,7 +110,7 @@ def getTransactionByID(customer_id:int):
     }
 
     for transaction in transactions:
-        product = repository.findProductByID(transaction.product_id)
+        product = repository.findProductByID(transaction.product_id ,db)
         if not product:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail=f"product not found")
         product_res = {
@@ -124,17 +126,17 @@ def getTransactionByID(customer_id:int):
 
 # deshbord
 @transaction.get(path="/getproducttransaction/{product_id}", status_code=status.HTTP_200_OK, response_model=schemas.TransactionProduct)
-def get_transaction(product_id: int):
+def get_transaction(product_id: int, db :Session = Depends(get_db)):
     if product_id < 0:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='product_id less than zero')
 
     # Fetch product by ID
-    product = repository.findProductByID(product_id)
+    product = repository.findProductByID(product_id, db)
     if not product:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
 
     # Fetch transactions for the product
-    total_qty, sex_data, age_data, race_data = repository.getTransactionLast7DayByProductID(product_id)
+    total_qty, sex_data, age_data, race_data = repository.getTransactionLast7DayByProductID(product_id , db)
 
     total_qty = 0 if not total_qty else total_qty
 
