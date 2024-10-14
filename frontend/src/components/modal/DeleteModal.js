@@ -13,9 +13,9 @@ const DeleteModal = ({ showDeleteModal, handleDeleteClose, selectedItem, col_nam
         try {
             for (const item of itemsToDelete) {
                 const param_delete_transaction = (col_name === "customer_id") ? `?customer_id=${item[col_name]}&product_id=all` : `?product_id=${item[col_name]}&customer_id=all`
-                console.log(param_delete_transaction)
+                // console.log(param_delete_transaction)
                 const result = await util.fetchDelete(path_delete_transaction, param_delete_transaction);
-                console.log(result)
+                // console.log(result)
                 if (result !== 200 && result !== 204) {
                     console.log(`Failed to delete item with ID: ${item[col_name]}`);
                 }
