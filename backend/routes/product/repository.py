@@ -1,20 +1,20 @@
 from fastapi import HTTPException, status
 from sqlalchemy import or_
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Session
 
 from . import schemas
-from config.database import db
 from model.product import Product
 
-def getAllProduct():
+def getAllProduct(db :Session):
     product_all = db.query(Product).all()
     return product_all
 
-def getProductByID(product_id:int):
+def getProductByID(product_id:int, db :Session ):
     product = db.query(Product).filter(Product.product_id == product_id).first()
     return product
 
-def getSearchProduct(query:str):
+def getSearchProduct(query:str, db :Session ):
     search_query = f"%{query}%"
     product = db.query(Product).filter(
                 or_(
@@ -25,15 +25,15 @@ def getSearchProduct(query:str):
     return product
 
 
-def __getNextProductID():
+def __getNextProductID(db :Session ):
     product = db.query(Product).order_by(Product.product_id.desc()).first()
     if not product:
         return 1
     return product.product_id + 1
 
-def addProduct(request_product: schemas.ProductCreate):
+def addProduct(request_product: schemas.ProductCreate, db :Session ):
     db_product = Product(
-        product_id=__getNextProductID(),
+        product_id=__getNextProductID(db),
         name=request_product.name,
         price=request_product.price,
         detail=request_product.detail,
@@ -48,15 +48,15 @@ def addProduct(request_product: schemas.ProductCreate):
         db.rollback()  # Rollback the transaction in case of error
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Error adding product") from e
 
-def findProductByID(product_id:int):
+def findProductByID(product_id:int, db :Session ):
     product = db.query(Product).filter(Product.product_id == product_id).first()
     return product
 
-def findProductForUpdateByID(product_id:int):
+def findProductForUpdateByID(product_id:int, db :Session ):
     product = db.query(Product).filter(Product.product_id == product_id).first()
     return product
 
-def updateProduct(product_id:int, update_request:schemas.ProductUpdate):
+def updateProduct(product_id:int, update_request:schemas.ProductUpdate, db :Session ):
     product = findProductForUpdateByID(product_id)
 
     product.name = update_request.name
@@ -71,7 +71,7 @@ def updateProduct(product_id:int, update_request:schemas.ProductUpdate):
         db.rollback()  # Rollback the transaction in case of error
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Error to update product") from e
 
-def deleteProduct(product_id:int):
+def deleteProduct(product_id:int, db :Session ):
     try:
         db.query(Product).filter(Product.product_id == product_id).delete()
         db.commit()
