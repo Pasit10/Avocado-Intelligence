@@ -54,7 +54,7 @@ def addTransaction(transaction_request:schemas.TransactionRequest, db :Session =
             qty=product.qty,
             transaction_date=date.today()
         )
-        repository.addTransaction(create_transaction)
+        repository.addTransaction(create_transaction, db)
 
     return {
         "code": status.HTTP_201_CREATED,
@@ -83,7 +83,7 @@ def deleteTransacrion(customer_id, product_id, db :Session = Depends(get_db)):
 
         repository.deleteTransactionByCustomerId(customer_id, db)
     else:
-        transaction = repository.findTransactionById(customer_id,product_id)
+        transaction = repository.findTransactionById(customer_id,product_id, db)
         if not transaction:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail=f"transaction not found")
 

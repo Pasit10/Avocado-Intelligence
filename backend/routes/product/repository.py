@@ -57,7 +57,7 @@ def findProductForUpdateByID(product_id:int, db :Session ):
     return product
 
 def updateProduct(product_id:int, update_request:schemas.ProductUpdate, db :Session ):
-    product = findProductForUpdateByID(product_id)
+    product = findProductForUpdateByID(product_id, db)
 
     product.name = update_request.name
     product.detail = update_request.detail
