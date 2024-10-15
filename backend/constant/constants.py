@@ -3,8 +3,8 @@
 # DATABASE CONFIG
 DATABASE_NAME = 'Ethnicity_Detection_Model'
 DATABASE_PORT = 3306
-USERNAME = 'username'
-PASSWORD = 'password' # database password
+USERNAME = 'root'
+PASSWORD = '0912263056' # database password
 
 # PATH TO MODEL
 PATH_MODEL_SEX = "model/Best_Gender_Detection_Resnet50.h5"
