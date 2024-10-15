@@ -6,4 +6,5 @@ pymysql
 pydantic
 uvicorn
 python-dateutil
+opencv
 tensorflow==2.16.1
