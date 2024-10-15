@@ -56,10 +56,10 @@ def predict(input_img:np.array):
     predicted_race = CLASS_LABEL_RACE_DICT[race_class_idx]
 
     # make fake data
-    output_list = []
-    output_list.append(random.randint(0,1)) # random sex
-    output_list.append(random.randint(0,100)) # random age
-    output_list.append(random.randint(0,4)) # random race
+    # output_list = []
+    # output_list.append(random.randint(0,1)) # random sex
+    # output_list.append(random.randint(0,100)) # random age
+    # output_list.append(random.randint(0,4)) # random race
 
     return_list = [predicted_sex, predicted_age, predicted_race]
     return return_list

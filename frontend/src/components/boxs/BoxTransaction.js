@@ -19,15 +19,17 @@ const BoxTransactions = ({ id }) => {
             setIsLoading(true);
             const result = await util.fetchData(queryData);
             // console.log(result);
-            const customer = {
-                customer_id: result.customer.customer_id,
-                sex: result.customer.sex,
-                age: result.customer.age,
-                race: result.customer.race
+            if (!result.detail) {
+                const customer = {
+                    customer_id: result.customer.customer_id,
+                    sex: result.customer.sex,
+                    age: result.customer.age,
+                    race: result.customer.race
+                }
+                setTransaction(result)
+                setcustomerData(customer);
+                setDataList(result.product_list);
             }
-            setTransaction(result)
-            setcustomerData(customer);
-            setDataList(result.product_list);
             setIsLoading(false);
         };
 
