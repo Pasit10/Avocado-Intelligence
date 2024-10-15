@@ -177,34 +177,41 @@ function SidebarAndNavbarPage({
           console.error('Error in handleAddTransaction:', error);
         }
 
-        const transaction_data = {
-          customer_id: customer_result.detail['customer_id'],
-          product_list: Array.from(selectedProductAddTransaction).map(item => {
-            return {
-              product_id: item.product_id,
-              qty: item.quantity,
-            }
-          })
+        if (!customer_result) {
+          setShowNotify(true);
+          setMessage('No face detected in the image')
+          setBtnType('warning')
         }
+        else {
+          const transaction_data = {
+            customer_id: customer_result.detail['customer_id'],
+            product_list: Array.from(selectedProductAddTransaction).map(item => {
+              return {
+                product_id: item.product_id,
+                qty: item.quantity,
+              }
+            })
+          }
 
-        try {
-          const result = await util.fetchPost('transaction/addtransaction', transaction_data)
-          // console.log(result)
-          if (result.code === 201) {
-            setShowNotify(true);
-            setMessage('customer_id ' + customer_result.detail['customer_id'] + ' added success')
-            setBtnType('success')
-            handleAddClose()
-            handleTransactionPage()
+          try {
+            const result = await util.fetchPost('transaction/addtransaction', transaction_data)
+            // console.log(result)
+            if (result.code === 201) {
+              setShowNotify(true);
+              setMessage('customer_id ' + customer_result.detail['customer_id'] + ' added success')
+              setBtnType('success')
+              handleAddClose()
+              handleTransactionPage()
+            }
+            else {
+              setShowNotify(true);
+              setMessage('Failed to add transaction')
+              setBtnType('warning')
+            }
           }
-          else {
-            setShowNotify(true);
-            setMessage('Failed to add transaction')
-            setBtnType('warning')
+          catch (error) {
+            console.error('Error in handleAddTransaction:', error);
           }
-        }
-        catch (error) {
-          console.error('Error in handleAddTransaction:', error);
         }
       }
       else {

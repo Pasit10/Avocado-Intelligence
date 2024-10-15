@@ -14,9 +14,10 @@ const AddTransactionModal = ({
 }) => {
     const [listProduct, setListProduct] = useState([]);
     const [isCameraOpen, setIsCameraOpen] = useState(false);
-    
+
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
+    const fileInputRef = useRef(null);
 
     const handleAddCloseBtn = () => {
         handleAddClose();
@@ -59,9 +60,23 @@ const AddTransactionModal = ({
         stopCamera();  // Stop the camera after taking the shot
     };
 
-    const resetCamera = () => {
+    const resetImagePreview = () => {
         setImagePreview(null); // Reset the image preview
-        startCamera(); // Start the camera again
+    };
+
+    const handleImageUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result); // Set the image preview
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const openFileInput = () => {
+        fileInputRef.current.click();
     };
 
     return (
@@ -82,7 +97,7 @@ const AddTransactionModal = ({
                                         className="img-thumbnail mt-2"
                                         style={{ maxWidth: '100%', height: 'auto' }}
                                     />
-                                    <Button variant="primary" onClick={resetCamera} className="mt-3">Take Another Shot</Button>
+                                    <Button variant="primary" onClick={resetImagePreview} className="mt-3">Upload Another Image</Button>
                                 </>
                             ) : isCameraOpen ? (
                                 <>
@@ -90,7 +105,17 @@ const AddTransactionModal = ({
                                     <Button variant="primary" onClick={takeShot} className="mt-3">Shot</Button>
                                 </>
                             ) : (
-                                <Button variant="primary" onClick={startCamera}>Open Camera</Button>
+                                <>
+                                    <Button variant="primary" onClick={startCamera}>Open Camera</Button>
+                                    <Button variant="secondary" onClick={openFileInput} className="mt-3">Upload Image</Button>
+                                    <input
+                                        type="file"
+                                        ref={fileInputRef}
+                                        accept="image/*"
+                                        style={{ display: 'none' }}
+                                        onChange={handleImageUpload}
+                                    />
+                                </>
                             )}
                             <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
                         </div>

@@ -56,14 +56,13 @@ const fetchPost = async (path, data) => {
         });
 
         const result = await response.json();
-        // console.log(result)
-        if (result.code !== 201) {
-            return result.detail[0];
+        console.log(result.code)
+        if (!result.code) {
+            return undefined;
         }
         return result;
     } catch (error) {
         console.error('Error making POST request:', error);
-        throw error;
     }
 };
 
