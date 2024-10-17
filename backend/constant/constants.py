@@ -7,7 +7,7 @@ USERNAME = 'username'
 PASSWORD = 'password' # database password
 
 # PATH TO MODEL
-PATH_MODEL_SEX = "model/Best_Gender_Detection_Resnet50.h5"
+PATH_MODEL_SEX = "model/model_gender.h5"
 # PATH_WEIGHTS_SEX = "model/model_gender.weights.h5"
 
 PATH_MODEL_AGE = "model/Best_Age_Detection_Resnet50.h5"
