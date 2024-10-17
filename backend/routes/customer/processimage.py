@@ -1,6 +1,7 @@
 from fastapi import HTTPException, status
 from PIL import Image
 from io import BytesIO
+import tensorflow as tf
 import numpy as np
 import cv2
 import base64
@@ -25,8 +26,13 @@ CLASS_LABEL_RACE_DICT = {
     3: "Indian",
     4: "Others"
 }
+# สร้าง ImageDataGenerator
 
-def processIMG(customer_img: str):
+test_generator = tf.keras.preprocessing.image.ImageDataGenerator(
+    preprocessing_function=tf.keras.applications.vgg16.preprocess_input
+)
+
+def processIMG(customer_img: str) -> np.array:
     try:
         # ถอดรหัส base64 เป็น image bytes
         image_bytes = base64.b64decode(customer_img)
@@ -38,11 +44,8 @@ def processIMG(customer_img: str):
         # โหลด Haar Cascade classifier
         face_cascade = cv2.CascadeClassifier("backend/config/haarcascade_frontalface_default.xml")
 
-        # แปลงภาพเป็น grayscale เพื่อใช้ในการตรวจจับใบหน้า
-        gray = cv2.cvtColor(img_np, cv2.COLOR_RGB2GRAY)
-
-        # ตรวจจับใบหน้า
-        faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+        # ไม่ต้องแปลงเป็น grayscale แต่ตรวจจับใบหน้าโดยตรงจากภาพ RGB
+        faces = face_cascade.detectMultiScale(img_np, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
 
         if len(faces) > 0:
             # ใช้ใบหน้าแรกที่ตรวจพบ
@@ -51,26 +54,29 @@ def processIMG(customer_img: str):
             # ครอบใบหน้า
             cropped_face = img_np[y:y+h, x:x+w]
 
-            # แปลงใบหน้าที่ถูกครอบให้เป็นขนาด 224x224 (ตามที่คุณต้องการ)
+            # แปลงใบหน้าที่ถูกครอบให้เป็นขนาด 224x224 (ตาม VGG16)
             cropped_face = cv2.resize(cropped_face, (224, 224))
 
-            # แปลงภาพจาก RGB เป็น BGR ก่อนบันทึก
             cropped_face_bgr = cv2.cvtColor(cropped_face, cv2.COLOR_RGB2BGR)
-
             # บันทึกใบหน้าที่ถูกครอบลงในไฟล์ (ต้องระบุส่วนขยายไฟล์เช่น .jpg หรือ .png)
             cv2.imwrite('backend/test_only/crop_img.jpg', cropped_face_bgr)
             print(f"Cropped face saved as {'backend/test_only/crop_img.jpg'}")
 
-            # เพิ่มมิติสำหรับการใช้งานในโมเดล
-            cropped_face_bgr = np.expand_dims(cropped_face_bgr, axis=0)  # เพิ่มมิติ batch ที่นี่
+            # ขยายมิติ batch (จาก (224, 224, 3) เป็น (1, 224, 224, 3))
+            cropped_face = np.expand_dims(cropped_face, axis=0)
 
-            return cropped_face_bgr
+            # ประมวลผลรูปภาพโดยใช้ ImageDataGenerator สำหรับ VGG16
+            processed_img = test_generator.standardize(cropped_face)
+
+            return processed_img
+
         else:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No faces detected in the image")
 
     except Exception as e:
         print(e)
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid image data")
+
 
 # def processIMG(customer_img: str):
 #     try:
@@ -90,7 +96,8 @@ def processIMG(customer_img: str):
 def predict(input_img:np.array):
     # predict sex
     sex = model_sex.predict(input_img)
-    sex_class_idx = 0 if sex[0][0] <= 0.5 else 1
+    sex_class_idx = 0 if sex[0][0] < 0.5 else 1
+    print(sex)
     predicted_sex = CLASS_LABEL_SEX_DICT[sex_class_idx]
 
     # predict age
