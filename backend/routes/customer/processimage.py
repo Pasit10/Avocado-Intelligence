@@ -28,7 +28,7 @@ CLASS_LABEL_RACE_DICT = {
 }
 # สร้าง ImageDataGenerator
 
-test_generator = tf.keras.preprocessing.image.ImageDataGenerator(
+generator = tf.keras.preprocessing.image.ImageDataGenerator(
     preprocessing_function=tf.keras.applications.vgg16.preprocess_input
 )
 
@@ -59,15 +59,14 @@ def processIMG(customer_img: str) -> np.array:
 
             cropped_face_bgr = cv2.cvtColor(cropped_face, cv2.COLOR_RGB2BGR)
             # บันทึกใบหน้าที่ถูกครอบลงในไฟล์ (ต้องระบุส่วนขยายไฟล์เช่น .jpg หรือ .png)
-            cv2.imwrite('backend/test_only/crop_img.jpg', cropped_face_bgr)
-            print(f"Cropped face saved as {'backend/test_only/crop_img.jpg'}")
+            # cv2.imwrite('backend/test_only/crop_img.jpg', cropped_face_bgr)
+            # print(f"Cropped face saved as {'backend/test_only/crop_img.jpg'}")
 
             # ขยายมิติ batch (จาก (224, 224, 3) เป็น (1, 224, 224, 3))
             cropped_face = np.expand_dims(cropped_face, axis=0)
 
             # ประมวลผลรูปภาพโดยใช้ ImageDataGenerator สำหรับ VGG16
-            processed_img = test_generator.standardize(cropped_face)
-
+            processed_img = generator.standardize(cropped_face)
             return processed_img
 
         else:
@@ -96,8 +95,7 @@ def processIMG(customer_img: str) -> np.array:
 def predict(input_img:np.array):
     # predict sex
     sex = model_sex.predict(input_img)
-    sex_class_idx = 0 if sex[0][0] < 0.5 else 1
-    print(sex)
+    sex_class_idx = round(sex[0][0])
     predicted_sex = CLASS_LABEL_SEX_DICT[sex_class_idx]
 
     # predict age
