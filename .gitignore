@@ -130,5 +130,6 @@ dist
 .pnp.*
 
 __pycache__/
+test_only/
 
 .venv
